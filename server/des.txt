@@ -1,0 +1,1 @@
+nếu có datas, labels, có thể lọc những mẫu ở gần biên giữa các nhóm không(giữ những mẫu có đặc trưng phân loại rõ rệt và nhãn tương ứng)

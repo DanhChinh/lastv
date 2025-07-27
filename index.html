@@ -1,0 +1,116 @@
+﻿<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biểu đồ Nến Nhật Cập Nhật Trực Tiếp</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0/dist/tf.min.js"></script> -->
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+
+<body>
+  <div id="echart"></div>
+  <!-- <div id="charts_container"></div> -->
+  <div id="form_controll" class="container">
+    <div>
+      <span id="valueDisplay">100</span>
+      <input id="slider" type="range" min="0" max="5000" value="100" step="100" />
+    </div>
+    <div>
+      <span id="addon-wrapping">Token</span>
+      <input id="DOM_accessToken" type="text" value="" />
+    </div>
+    <div>
+      <span>Target</span>
+      <input id="DOM_target" type="text" value="20" />
+    </div>
+    <button id="DOM_isPlay">Play</button>
+    <button id="DOM_isConnectGame">Connect</button>
+    <button id="DOM_connectPyserver">Connect Pyserver</button>
+    <button id="DOM_reverse">Reverse</button>
+
+  </div>
+
+  <div id="chat-container">
+    <div id="chat-messages"></div>
+    <!-- <div id="chat-input">
+      <input type="text" id="messageInput" placeholder="Nhập tin nhắn...">
+      <button onclick="sendMessage()">Gửi</button>
+    </div> -->
+  </div>
+
+  <button class="togle" id="hide_form" >
+    togle form
+  </button>
+  <button class="togle" id="hide_mess" >
+    togle mess
+  </button>
+  
+  <div class="card">
+    <div class="card-row">
+      <span class="label">Lựa chọn:</span>
+      <h4 id="DOM_choice" class="value">1</h4>
+    </div>
+    <div class="card-row">
+      <span class="label">Giá trị:</span>
+      <h4 id="DOM_value" class="value">0</h4>
+    </div>
+  </div>
+  
+  <div id="table-container"></div>
+
+  <script>
+    function handleTogle(element = form_controll){
+      
+      if (element.style.display === "none" ) {
+    element.style.display = "flex"; // hoặc "inline", "flex", tùy layout bạn muốn
+  } else {
+    element.style.display = "none";
+  }
+    }
+
+    
+    function getCurrentTime() {
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const seconds = now.getSeconds().toString().padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const message = input.value.trim();
+      if (message !== '') {
+        addMessage(message);
+        input.value = '';
+      }
+    }
+
+    function addMessage(content = "...", from = "player") {
+      const chatBox = document.getElementById('chat-messages');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `chat-message ${from}`;
+      msgDiv.innerHTML = `<small>${getCurrentTime()}___${from}:</small> ${content}`;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+    }
+
+    hide_form.onclick = ()=>handleTogle();
+    hide_mess.onclick = ()=>handleTogle(document.getElementById('chat-container'))
+
+    setInterval(()=>{
+      document.getElementById('chat-messages').innerHTML = '';
+    },600000)
+  </script>
+  <script src="./src/echart.js"></script>
+  <script src="./src/main.js"></script>
+  <script src="./src/remote.js"></script>
+
+</body>
+
+</html>
