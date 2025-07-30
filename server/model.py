@@ -10,10 +10,13 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
-def getScore(percent):
+def getScore(percent, length):
+    length = min(length, 13)
+    p = length/13
     if percent== 0 or percent==1 :
         return 0
-    return int(percent*100)-50
+    score = (percent - 0.5)*p
+    return int(score*100)
 class Model:
     def __init__(self, model, model_name):
         self.model = model
@@ -50,7 +53,7 @@ class Model:
         self.sid = sid
         self.state = "B3TTING"
         self.predict = int(self.model.predict(x_pred)[0])
-        self.score = getScore(self.percent) # -49 -> 49
+        self.score = getScore(self.percent, self.isTrue+ self.isFalse)
         if self.score>0:
             self.predict_fix = int(not self.predict)
         else:
@@ -76,7 +79,7 @@ class Model:
                 self.reset()
                 return
         self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
-        if self.percent==0.5 and (self.isTrue+self.isFalse)>=16:
+        if self.percent==0.5 and (self.isTrue+self.isFalse)>=30:
             self.profits.append(self.profit)
             self.reset()
         self.predict = ''

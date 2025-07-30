@@ -54,11 +54,11 @@ DOM_connectPyserver.onclick = (e) => {
     value = msg.value
     if(prd && value){
       DOM_choice.innerText = prd;
-      DOM_value.innerText = value;
+      DOM_value.innerText = formatCurrency(value);
       if(isReverse){
         prd = prd == 1? 2: 1;
       }
-      sendMessageToGame(slider.value * value, record.sid, prd);
+      sendMessageToGame(roundToThousand(slider.value * value), record.sid, prd);
     }
 
     const tableData = msg.table; // hoặc data.value nếu bạn gửi cái đó
@@ -108,4 +108,12 @@ function renderTable(data) {
 
   html += "</tbody></table>";
   container.innerHTML = html;
+}
+function formatCurrency(num, locale = 'vi-VN', currency = 'VND') {
+  return num.toLocaleString(locale, { style: 'currency', currency: currency });
+}
+
+
+function roundToThousand(num) {
+  return Math.round(num / 1000) * 1000;
 }
