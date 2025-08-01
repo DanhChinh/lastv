@@ -74,12 +74,8 @@ class Model:
             self.profit += self.score
         else:
             self.profit -= self.score
-            if self.profit <-100:
-                self.profits.append(self.profit)
-                self.reset()
-                return
         self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
-        if self.percent==0.5 and (self.isTrue+self.isFalse)>=30:
+        if self.percent==0.5 and (self.isTrue+self.isFalse)>=15:
             self.profits.append(self.profit)
             self.reset()
         self.predict = ''
