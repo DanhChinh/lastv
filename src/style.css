@@ -44,7 +44,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: #00987a;
+  background-color: #7777776c;
 }
 
 
@@ -72,7 +72,7 @@ button:hover {
 }
 
 #table-container{
-  background-color: whitesmoke;
+  background-color: rgba(245, 245, 245, 0.486);
   width: 100%;
 }
 table {
@@ -87,7 +87,7 @@ table {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 table thead tr {
-  background-color: #009879;
+  background-color: #686868;
   color: #ffffff;
   text-align: left;
   font-weight: bold;
@@ -100,10 +100,10 @@ table tbody tr {
   background-color: #f3f3f3;
 }
 table tbody tr:nth-child(even) {
-  background-color: #adfaed;
+  background-color: #c7c7c7;
 }
 table tbody tr:hover {
-  background-color: #45f1c0;
+  background-color: #6b6b6b;
 }
 table tbody tr.active-row {
   font-weight: bold;

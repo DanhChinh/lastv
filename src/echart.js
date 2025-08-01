@@ -84,8 +84,8 @@ function calcCandle(open, change) {
         isPlay = false;
         DOM_isPlay.style.backgroundColor = "black";
     }
-    let low = Math.min(open, close) - Math.random() * 2;
-    let high = Math.max(open, close) + Math.random() * 2;
+    let low = Math.min(open, close) - Math.random() * change;
+    let high = Math.max(open, close) + Math.random() * change;
     if(open==0 && change==0){
         low = 0;
         high= 0;

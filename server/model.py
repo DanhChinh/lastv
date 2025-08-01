@@ -110,15 +110,15 @@ scaler, data, label = make_data()
 
 classifiers = {}
 
-classifiers[f"RandomForest"] = Model(RandomForestClassifier(n_estimators=100, max_depth=5, random_state=i), f"RF")
+classifiers[f"RandomForest"] = Model(RandomForestClassifier(n_estimators=100, max_depth=5), f"RF")
 classifiers[f"KNN"] = Model(KNeighborsClassifier(n_neighbors=5), f"KN")
 classifiers[f"LogReg"] = Model(LogisticRegression(max_iter=1000), f"LR")
 classifiers[f"SVC"] = Model(SVC(probability=True, kernel='rbf'), f"SVC")
-classifiers[f"DT"] = Model(DecisionTreeClassifier(max_depth=5, random_state=i), f"DT")
+classifiers[f"DT"] = Model(DecisionTreeClassifier(max_depth=5), f"DT")
 classifiers[f"GNB"] = Model(GaussianNB(), f"GNB")
-classifiers[f"MLP"] = Model(MLPClassifier(hidden_layer_sizes=(50,), max_iter=500, random_state=i), f"MLP")
-classifiers[f"GB"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3, random_state=i), f"GB")
-classifiers[f"Ada"] = Model(AdaBoostClassifier(n_estimators=50, random_state=i), f"Ada")
+classifiers[f"MLP"] = Model(MLPClassifier(hidden_layer_sizes=(50,), max_iter=500), f"MLP")
+classifiers[f"GB"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3), f"GB")
+classifiers[f"Ada"] = Model(AdaBoostClassifier(n_estimators=50), f"Ada")
 
 
 
