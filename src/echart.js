@@ -11,7 +11,6 @@ labels.push(1); // chỉ số 0 cho trục X
 
 
 const option = {
-    title: { text: 'Biểu đồ Nến Nhật Cập Nhật Trực Tiếp' },
     tooltip: { trigger: 'axis' },
     xAxis: {
         type: 'category',
@@ -19,20 +18,6 @@ const option = {
         scale: true
     },
     yAxis: { scale: true },
-    // dataZoom: [
-    //     {
-    //         type: 'slider',
-    //         start: 70,
-    //         end: 100,
-    //         xAxisIndex: 0
-    //     },
-    //     {
-    //         type: 'inside',
-    //         start: 70,
-    //         end: 100,
-    //         xAxisIndex: 0
-    //     }
-    // ],
     series: [
         {
             type: 'candlestick',
@@ -84,8 +69,8 @@ function calcCandle(open, change) {
         isPlay = false;
         DOM_isPlay.style.backgroundColor = "black";
     }
-    let low = Math.min(open, close) - Math.random() * change;
-    let high = Math.max(open, close) + Math.random() * change;
+    let low = Math.min(open, close) - Math.random() * Math.abs(change);
+    let high = Math.max(open, close) + Math.random() * Math.abs(change);
     if(open==0 && change==0){
         low = 0;
         high= 0;

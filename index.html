@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Biểu đồ Nến Nhật Cập Nhật Trực Tiếp</title>
+  <title>BuBu & DuDu</title>
+  <link rel="shortcut icon" href="./avatar.jpg" type="image/x-icon">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
@@ -27,7 +28,7 @@
     <div class="container">
       <div class="row">
         <div class="col-4">
-          <div class="card">
+          <div class="card bg_opacity">
             <div class="card-row">
               <span class="label">Lựa chọn:</span>
               <h4 id="DOM_choice" class="value">1</h4>
@@ -37,7 +38,7 @@
               <h4 id="DOM_value" class="value">0</h4>
             </div>
           </div>
-          <div id="form_controll">
+          <div id="form_controll" class="bg_opacity my-1">
             <div>
               <span id="valueDisplay">1000</span>
               <input id="slider" type="range" min="0" max="5000" value="1000" step="100" />
@@ -57,7 +58,7 @@
         
           </div>
         
-          <div id="chat-container">
+          <div id="chat-container" class="bg_opacity">
           </div>
         </div>
         <div class="col-8">
@@ -67,10 +68,12 @@
     </div>
   </div>
   <script>
+
+
     function handleTogle(element = form_controll){
       
       if (element.style.display === "none" ) {
-    element.style.display = "flex"; // hoặc "inline", "flex", tùy layout bạn muốn
+    element.style.display = "block"; 
   } else {
     element.style.display = "none";
   }
@@ -101,9 +104,32 @@ function addMessage(content = "...", from = "player") {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-
     hide_form.onclick = ()=>handleTogle();
     hide_mess.onclick = ()=>handleTogle(document.getElementById('chat-container'))
+
+
+    function hideScrollbars() {
+    document.documentElement.style.overflow = 'auto';
+    document.body.style.overflow = 'auto';
+
+    // Chrome, Safari
+    document.documentElement.style.scrollbarWidth = 'none';
+    document.body.style.scrollbarWidth = 'none';
+
+    // IE, Edge
+    document.documentElement.style.msOverflowStyle = 'none';
+    document.body.style.msOverflowStyle = 'none';
+  }
+
+  // Gọi khi trang load
+  document.addEventListener("DOMContentLoaded", hideScrollbars);
+
+  // Gọi khi resize
+  window.addEventListener("resize", hideScrollbars);
+
+  // Gọi khi nội dung DOM thay đổi
+  const observer = new MutationObserver(hideScrollbars);
+  observer.observe(document.body, { childList: true, subtree: true });
 
   </script>
   <script src="./src/echart.js"></script>

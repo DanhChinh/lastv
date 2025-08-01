@@ -1,21 +1,37 @@
-body {
+* {
+  box-sizing: border-box;
+}
+
+html, body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  height: 100%;
+  overflow: auto;
+  scrollbar-width: none;         /* Firefox */
+  -ms-overflow-style: none;      /* IE, Edge */
+
   background-image: url('../background.jpg');
 }
 
-#form_controll {
-  background: linear-gradient(to right, rgb(171, 143, 143), black);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(39, 36, 36, 0.1);
-  width: 100%;
-  color: white;
-  padding: 20px;
-
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;                 /* Chrome, Safari */
 }
+
+
+.bg_opacity{
+
+  width: 100%;
+  padding: 10px 20px;
+  background: #fcfcfc35;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
 input{
   width: 100%;
+  background: rgba(245, 245, 245, 0.733);
 }
 input[type="text"] {
   padding: 5px;
@@ -36,15 +52,9 @@ button:hover {
 
 
 #chat-container {
-  width: 100%;
-  padding: 20px;
-  height: auto;
-  border-radius: 10px;
-
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: #7777776c;
 }
 
 
@@ -80,11 +90,18 @@ table {
   border-collapse: collapse;
   font-size: 16px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  min-width: 400px;
   width: 100%;
   border-radius: 8px 8px 0 0;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+
+  overflow: auto !important;
+
+  /* Ẩn scrollbar - áp dụng cho Firefox, IE, Edge */
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important;  /* IE 10+ */
+
 }
 table thead tr {
   background-color: #686868;
@@ -109,39 +126,17 @@ table tbody tr.active-row {
   font-weight: bold;
   color: #009879;
 }
-.None{
-  opacity: 0.5;
-}
 
 
-.card {
-  width: 100%;
-  padding: 20px;
-  background: #fcfcfc35;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', sans-serif;
-}
 
 .card-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
   border-bottom: 1px solid #eee;
   width: 100%;
 }
 
 .card-row:last-child {
   border-bottom: none;
-}
-
-.label {
-  font-weight: 600;
-  color: #333;
-}
-
-.value {
-  color: #01060c;
-  margin: 0;
 }

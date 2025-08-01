@@ -86,13 +86,7 @@ function renderTable(data) {
   html += "</tr></thead><tbody>";
 
   data.forEach(row => {
-    if(row['score']==0){
-      html += `<tr class="None">`;
-
-    }else{
-      html += "<tr>";
-
-    }
+    html += "<tr>";
     headers.forEach(key => {
       let val = row[key];
       if (Array.isArray(val) || typeof val === "object") {
