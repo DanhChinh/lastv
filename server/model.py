@@ -34,7 +34,7 @@ class Model:
         self.isTrue = 0
         self.isFalse = 0
         self.score = 0
-        self.state = "waitting"
+        self.state = "WT"
         while self.balance > 0.51 or self.balance< 0.49:
             x_train, self.x_test, y_train, y_test = train_test_split(
                 data, label,
@@ -51,7 +51,7 @@ class Model:
 
     def make_predict(self, sid, x_pred):
         self.sid = sid
-        self.state = "B3TTING"
+        self.state = "BT"
         self.predict = int(self.model.predict(x_pred)[0])
         self.score = getScore(self.percent, self.isTrue+ self.isFalse)
         if self.score>0:
@@ -85,17 +85,20 @@ class Model:
         self.predict = ''
         self.predict_fix = ''
     def to_dict(self):
+        profits = self.profits
+        if len(profits) == 0:
+            profits = ''
         return {
             "sid": self.sid,
             "state":self.state,
-            "name": f"{self.model_name} {self.balance}",
+            "name": f"{self.model_name}",
             "true": self.isTrue,
             "false": self.isFalse,
             "percent": float(self.percent),
-            "predict": f"{self.predict}->{self.predict_fix}",
+            "predict": f"{self.predict}{self.predict_fix}",
             'score':self.score,
             'profit':self.profit,
-            'profits': self.profits
+            'profits': profits
         }
 
 
@@ -106,16 +109,16 @@ scaler, data, label = make_data()
 
 
 classifiers = {}
-for i in range(1):  # giới hạn lại số lượng bản sao để tránh overfitting
-    classifiers[f"RandomForest_{i}"] = Model(RandomForestClassifier(n_estimators=100, max_depth=5, random_state=i), f"RF_{i}")
-    classifiers[f"KNN_{i}"] = Model(KNeighborsClassifier(n_neighbors=5), f"KN_{i}")
-    classifiers[f"LogReg_{i}"] = Model(LogisticRegression(max_iter=1000), f"LR_{i}")
-    classifiers[f"SVC_{i}"] = Model(SVC(probability=True, kernel='rbf'), f"SVC_{i}")
-    classifiers[f"DT_{i}"] = Model(DecisionTreeClassifier(max_depth=5, random_state=i), f"DT_{i}")
-    classifiers[f"GNB_{i}"] = Model(GaussianNB(), f"GNB_{i}")
-    classifiers[f"MLP_{i}"] = Model(MLPClassifier(hidden_layer_sizes=(50,), max_iter=500, random_state=i), f"MLP_{i}")
-    classifiers[f"GB_{i}"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3, random_state=i), f"GB_{i}")
-    classifiers[f"Ada_{i}"] = Model(AdaBoostClassifier(n_estimators=50, random_state=i), f"Ada_{i}")
+
+classifiers[f"RandomForest"] = Model(RandomForestClassifier(n_estimators=100, max_depth=5, random_state=i), f"RF")
+classifiers[f"KNN"] = Model(KNeighborsClassifier(n_neighbors=5), f"KN")
+classifiers[f"LogReg"] = Model(LogisticRegression(max_iter=1000), f"LR")
+classifiers[f"SVC"] = Model(SVC(probability=True, kernel='rbf'), f"SVC")
+classifiers[f"DT"] = Model(DecisionTreeClassifier(max_depth=5, random_state=i), f"DT")
+classifiers[f"GNB"] = Model(GaussianNB(), f"GNB")
+classifiers[f"MLP"] = Model(MLPClassifier(hidden_layer_sizes=(50,), max_iter=500, random_state=i), f"MLP")
+classifiers[f"GB"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3, random_state=i), f"GB")
+classifiers[f"Ada"] = Model(AdaBoostClassifier(n_estimators=50, random_state=i), f"Ada")
 
 
 

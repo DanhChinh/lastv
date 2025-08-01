@@ -6,7 +6,7 @@ function sendMessageToGame(b, sid, eid) {
   }
 
   let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
-  addMessage(`${b} ->${eid}`, "player")
+  addMessage(`${formatCurrency(b)} ->${eid}`, "player")
 
   socket.send(message);
 }
