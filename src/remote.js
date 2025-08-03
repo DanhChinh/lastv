@@ -2,7 +2,6 @@ var isPlay = false;
 var isConnectGame = false;
 var isConnectMyServer = false;
 var accessToken = "";
-var isReverse = false;
 var accessTokenStorege = localStorage.getItem("accessToken");
 DOM_accessToken.value = accessTokenStorege;
 
@@ -33,11 +32,7 @@ const valueDisplay = document.getElementById("valueDisplay");
 slider.addEventListener("input", function () {
   valueDisplay.textContent = slider.value;
 });
-DOM_reverse.onclick = (e) => {
-  isReverse = !isReverse;
-  e.target.textContent = isReverse ? "Reverse..." : "no Reverse";
-  e.target.style.backgroundColor = isReverse ? "black" : "blue";
-};
+
 var socket_io = undefined;
 
 DOM_connectPyserver.onclick = (e) => {
@@ -49,16 +44,14 @@ DOM_connectPyserver.onclick = (e) => {
     e.target.style.backgroundColor = "green" ;
   });
   socket_io.on("server_message", (msg) => {
-    // console.log("📩 Server: " + JSON.stringify(msg));
-    prd = msg.predict
-    value = msg.value
-    if(prd && value){
-      DOM_choice.innerText = prd;
-      DOM_value.innerText = formatCurrency(value);
-      if(isReverse){
-        prd = prd == 1? 2: 1;
-      }
-      sendMessageToGame(roundToThousand(slider.value * value), record.sid, prd);
+
+    BOT.predict = +msg.predict;
+    BOT.value = +msg.value;
+    BOT.bet = Math.min(BOT.gold, +slider.value * BOT.value);
+    BOT.updateDom()
+
+    if(BOT.predict && BOT.value){
+      sendMessageToGame(roundToThousand(BOT.bet), record.sid, BOT.predict);
     }
 
     const tableData = msg.table; // hoặc data.value nếu bạn gửi cái đó

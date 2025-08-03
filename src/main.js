@@ -87,7 +87,6 @@ function socket_connect() {
         record.progress.push(JSON.parse(JSON.stringify(mgs.bs)));
 
         if (record.progress.length === 35) {
-          // [prd, value] = await predict(JSON.parse(JSON.stringify(record.progress)));
           socket_io.emit("xulydulieu",{
             'sid':record.sid ||1,
             'progress':JSON.stringify(record.progress)
@@ -106,7 +105,9 @@ function socket_connect() {
         let rs = mgs.d1 + mgs.d2 + mgs.d3;
         addMessage(`${rs}`, "server")
         rs = rs > 10 ? 1 : 2;
-        checkPrd(prd, rs, value);
+        checkPrd(BOT.predict, rs, BOT.value);
+        BOT.checkPrd(rs);
+        BOT.updateDom();
         socket_io.emit("kiemtradulieu", {
           'sid':record.sid ||1,
           'rs':rs==1?1:0
@@ -131,6 +132,9 @@ function socket_connect() {
 
       if (mgs.cmd === 100) {
         addMessage(JSON.stringify(mgs), "server")
+        BOT.gold = +mgs.As.gold;
+        BOT.gold = 500000;
+        BOT.updateDom()
         return;
       }
     } else {
@@ -162,12 +166,36 @@ function socket_connect() {
 }
 
 
-var prd = undefined;
-var value = 0;
+
 function checkPrd(prd, rs, value) {
   let reward = value;
   if (prd != rs) {
     reward *= -1
   }
   addData(reward)
+}
+
+
+var BOT = {
+  predict: 0,
+  value:0,
+  bet:0,
+  gold:0,
+  checkPrd: function(result){
+    if (this.predict == result){
+      this.gold += Math.floor(0.975*this.bet);
+    }else{
+      this.gold -= this.bet;
+    }
+    this.predict=0;
+    this.value=0;
+    this.bet=0;
+  },
+  updateDom: function(){
+    console.log("dom",this.predict, this.value, this.bet, this.gold)
+    document.getElementById('DOM_choice').innerText = this.predict? this.predict:'';
+    document.getElementById('DOM_value').innerText = this.value? this.value: '';
+    document.getElementById('DOM_bet').innerText = this.bet? formatCurrency(this.bet):'';
+    document.getElementById('DOM_gold').innerText = formatCurrency(this.gold);
+  }
 }

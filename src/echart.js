@@ -92,7 +92,6 @@ function addData(newChange) {
 
     const lastCandle = candleData[candleData.length - 1];
     const lastClose = parseFloat(lastCandle[1]); // lấy close của nến cuối
-    console.log("lastClose", lastClose)
 
     const result = calcCandle(+lastClose, +newChange || 0);
     candleData.push(result.candle);
