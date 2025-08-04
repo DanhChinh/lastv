@@ -19,7 +19,7 @@ def handle_kiemtradulieu(msg):
     sid = msg.get('sid')
     rs = msg.get('rs')   
     table = check(sid, rs)
-    emit('server_message', { "table":table})
+    emit('server_message', {"predict": 0, "value":0, "table":table})
 
 
 @socketio.on('connect')

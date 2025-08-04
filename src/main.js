@@ -6,7 +6,7 @@ function sendMessageToGame(b, sid, eid) {
   }
 
   let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
-  addMessage(`${formatCurrency(b)} ->${eid}`, "player")
+  addMessage(`${eid==1?'Buy':'Sell' } ${formatCurrency(b)}`, "investors")
 
   socket.send(message);
 }
@@ -103,11 +103,11 @@ function socket_connect() {
         // sendDataToThuhuyenFun(JSON.parse(JSON.stringify(record)));
         is_betting = false;
         let rs = mgs.d1 + mgs.d2 + mgs.d3;
-        addMessage(`${rs}`, "server")
+        addMessage(`${rs>10?'Up':'Down'}`, "market")
         rs = rs > 10 ? 1 : 2;
         checkPrd(BOT.predict, rs, BOT.value);
         BOT.checkPrd(rs);
-        BOT.updateDom();
+        BOT.updateDom('checkPrd(rs)');
         socket_io.emit("kiemtradulieu", {
           'sid':record.sid ||1,
           'rs':rs==1?1:0
@@ -133,8 +133,8 @@ function socket_connect() {
       if (mgs.cmd === 100) {
         addMessage(JSON.stringify(mgs), "server")
         BOT.gold = +mgs.As.gold;
-        BOT.gold = 500000;
-        BOT.updateDom()
+        // BOT.gold = 500000;
+        BOT.updateDom('cmd=100')
         return;
       }
     } else {
@@ -183,7 +183,7 @@ var BOT = {
   gold:0,
   checkPrd: function(result){
     if (this.predict == result){
-      this.gold += Math.floor(0.975*this.bet);
+      this.gold += Math.floor(0.97*this.bet);
     }else{
       this.gold -= this.bet;
     }
@@ -191,8 +191,8 @@ var BOT = {
     this.value=0;
     this.bet=0;
   },
-  updateDom: function(){
-    console.log("dom",this.predict, this.value, this.bet, this.gold)
+  updateDom: function(index=0){
+    // console.log("dom", index,this.predict, this.value, this.bet, this.gold)
     document.getElementById('DOM_choice').innerText = this.predict? this.predict:'';
     document.getElementById('DOM_value').innerText = this.value? this.value: '';
     document.getElementById('DOM_bet').innerText = this.bet? formatCurrency(this.bet):'';

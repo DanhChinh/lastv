@@ -85,16 +85,15 @@ class Model:
         if len(profits) == 0:
             profits = ''
         return {
-            "sid": self.sid,
-            "state":self.state,
+            #"state":self.state,
             "name": f"{self.model_name}",
             "true": self.isTrue,
             "false": self.isFalse,
             "percent": float(self.percent),
-            "predict": f"{self.predict}{self.predict_fix}",
-            'score':self.score,
+            #"predict": f"{self.predict}{self.predict_fix}",
+            #'score':self.score,
             'profit':self.profit,
-            'profits': profits
+            #'profits': profits
         }
 
 

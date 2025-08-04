@@ -44,8 +44,9 @@ const option = {
             data: [],
             smooth: true,
             lineStyle: {
-                width: 1,
-                color: '#330066'
+                width: 2
+                // ,
+                // color: '#330066'
             },
             tooltip: {
                 trigger: 'axis',

@@ -47,11 +47,14 @@ DOM_connectPyserver.onclick = (e) => {
 
     BOT.predict = +msg.predict;
     BOT.value = +msg.value;
-    BOT.bet = Math.min(BOT.gold, +slider.value * BOT.value);
-    BOT.updateDom()
+    BOT.bet = Math.min(
+    lamTronXuongHangNghin(BOT.gold), 
+    lamTronXuongHangNghin(+slider.value * BOT.value)
+  );
+    BOT.updateDom("server mess")
 
     if(BOT.predict && BOT.value){
-      sendMessageToGame(roundToThousand(BOT.bet), record.sid, BOT.predict);
+      sendMessageToGame(BOT.bet, record.sid, BOT.predict);
     }
 
     const tableData = msg.table; // hoặc data.value nếu bạn gửi cái đó
@@ -61,6 +64,9 @@ DOM_connectPyserver.onclick = (e) => {
 });
 };
 
+function lamTronXuongHangNghin(so) {
+  return Math.floor(so / 1000) * 1000;
+}
 
 
 
@@ -96,8 +102,13 @@ function renderTable(data) {
   html += "</tbody></table>";
   container.innerHTML = html;
 }
-function formatCurrency(num, locale = 'vi-VN', currency = 'VND') {
-  return num.toLocaleString(locale, { style: 'currency', currency: currency });
+function formatCurrency(num, locale = 'en-US', currency = 'USD') {
+  return num.toLocaleString(locale, {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
 }
 
 
