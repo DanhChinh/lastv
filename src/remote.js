@@ -84,6 +84,10 @@ function renderTable(data) {
   });
   html += "</tr></thead><tbody>";
 
+  data.sort(
+    (a,b)=>a.percent - b.percent
+  )
+
   data.forEach(row => {
     html += "<tr>";
     headers.forEach(key => {
