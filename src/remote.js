@@ -34,7 +34,10 @@ slider.addEventListener("input", function () {
 });
 
 var socket_io = undefined;
-
+DOM_fixMGold.onclick = (e)=>{
+  BOT.gold = +DOM_fixM.value
+  BOT.updateDom()
+}
 DOM_connectPyserver.onclick = (e) => {
   socket_io = io("http://localhost:5000");
 
