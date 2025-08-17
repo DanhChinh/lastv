@@ -106,8 +106,8 @@ scaler, data, label = make_data()
 classifiers = {}
 
 # classifiers[f"RandomForest"] = Model(RandomForestClassifier(n_estimators=100, max_depth=5), f"RF")
-classifiers[f"KNN"] = Model(KNeighborsClassifier(n_neighbors=5), f"KN")
-classifiers[f"LogReg"] = Model(LogisticRegression(max_iter=1000), f"LR")
+classifiers[f"KNN"] = Model(KNeighborsClassifier(n_neighbors=5), f"KNN")
+classifiers[f"LogReg"] = Model(LogisticRegression(max_iter=1000), f"LogReg")
 classifiers[f"SVC"] = Model(SVC(probability=True, kernel='rbf'), f"SVC")
 classifiers[f"DT"] = Model(DecisionTreeClassifier(max_depth=5), f"DT")
 classifiers[f"GNB"] = Model(GaussianNB(), f"GNB")
