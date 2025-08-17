@@ -21,10 +21,25 @@ def handle_kiemtradulieu(msg):
     table = check(sid, rs)
     emit('server_message', {"predict": 0, "value":0, "table":table})
 
+@socketio.on('reLoadAgl')
+def handle_reLoadAgl(msg):
+    name = msg.get('name') 
+    action = msg.get('action')
+    print(name, action)
+    if action == 'reload':
+        classifiers[name].reset()
+    else:
+        del classifiers[name]       
+    emit('server_message', {"predict": 0, "value":0, "table":reRenderTable()})
+
+        
+
 
 @socketio.on('connect')
 def handle_connect():
     print('✅ Client connected')
+    emit('server_message', {"predict": 0, "value":0, "table":reRenderTable()})
+
 @socketio.on('disconnect')
 def handle_disconnect():
     print('❌ Client disconnected')

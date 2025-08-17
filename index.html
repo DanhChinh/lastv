@@ -23,7 +23,16 @@
   </button>
   
   <div class="container">
-    <div id="echart"></div>
+    <div class='row'>
+      <div class='col-3'>
+        <ul>
+          <li>Khong tx du chi 1k</li>
+          <li>Choi tren lai</li>
+          <li>...</li>
+        </ul>
+      </div>
+      <div id="echart" class='col-8'></div>
+    </div>
     
     <div class="container">
       <div class="row">
@@ -47,12 +56,10 @@
               <h5 id="DOM_gold" class="value">0</h5>
             </div>
           </div>
-
-
           <div id="form_controll" class="bg_opacity my-1">
             <div>
               <span id="valueDisplay">1000</span>
-              <input id="slider" type="range" min="0" max="5000" value="1000" step="500" />
+              <input id="slider" type="range" min="0" max="15000" value="1000" step="500" />
             </div>
             <div>
               <span id="addon-wrapping">Token</span>

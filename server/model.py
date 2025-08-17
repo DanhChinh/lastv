@@ -144,7 +144,11 @@ def check(sid, result):
         table.append(model.to_dict())
     return table
 
-
+def reRenderTable():
+    table = []
+    for name, model in classifiers.items():
+        table.append(model.to_dict())
+    return table
 
 
 #reset persent

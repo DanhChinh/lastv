@@ -103,6 +103,13 @@ function renderTable(data) {
       }
       html += `<td>${val}</td>`;
     });
+
+    html += `<td>
+              <button onclick="handleReLoadAgl('${row['name']}', 'reload' )">🔄</button>
+            </td>`
+    html += `<td>
+            <button onclick="handleReLoadAgl('${row['name']}', 'delete')">🗑️</button>
+          </td>`
     html += "</tr>";
   });
 
@@ -118,6 +125,13 @@ function formatCurrency(num, locale = 'en-US', currency = 'USD') {
   });
 }
 
+function handleReLoadAgl(name, action){
+  console.log(name, action)
+  socket_io.emit("reLoadAgl", {
+    'name':name,
+    'action':action
+  })
+}
 
 function roundToThousand(num) {
   return Math.round(num / 1000) * 1000;
