@@ -32,7 +32,10 @@ def handle_reLoadAgl(msg):
         del classifiers[name]       
     emit('server_message', {"predict": 0, "value":0, "table":reRenderTable()})
 
-        
+@socketio.on('reLoadDict')
+def handle_reLoadDict(msg):
+    make_dict()      
+    emit('server_message', {"predict": 0, "value":0, "table":reRenderTable()})      
 
 
 @socketio.on('connect')
