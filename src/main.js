@@ -69,7 +69,8 @@ var initRecord = (
   return { sid, progress, d1, d2, d3 };
 };
 var record = initRecord();
-
+var progress35 = null
+var sendHistory4 = false
 function socket_connect() {
   socket = new WebSocket(MESSAGE_WS.url);
 
@@ -91,6 +92,7 @@ function socket_connect() {
             'sid':record.sid ||1,
             'progress':JSON.stringify(record.progress)
           });
+          progress35 = JSON.stringify(record.progress)
         }
         return;
       }
@@ -112,6 +114,18 @@ function socket_connect() {
           'sid':record.sid ||1,
           'rs':rs==1?1:0
         })
+
+        updateHistory(record.sid, progress35, rs==1?1:0)
+        let data4 = getLast4CompleteRecords()
+        if(data4 && !sendHistory4){
+          console.log("emit data4")
+          socket_io.emit("khoitao", {
+            'data4':data4
+          })
+          sendHistory4 = true;
+        }else{
+          console.log('da gui du lieu hoac du lieu chua du')
+        }
         return;
       }
       //start

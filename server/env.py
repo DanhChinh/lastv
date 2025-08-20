@@ -128,3 +128,42 @@ def filter_reliable_predictions(X_train, x_pred_array, y_pred_array, knn, thresh
 
 
 
+
+history4 = pd.DataFrame(columns=["sid", "progress", "rs"])
+isInit = False
+
+import pandas as pd
+
+# Tạo DataFrame ban đầu (ví dụ)
+history4 = pd.DataFrame(columns=["sid", "progress", "rs"])
+
+def addHistory(sid, progress, rs):
+    global history4
+    # Kiểm tra nếu sid đã có trong DataFrame
+    if sid in history4["sid"].values:
+        # Nếu sid đã có, cập nhật rs
+        history4.loc[history4["sid"] == sid, "rs"] = rs
+    else:
+        # Nếu sid chưa có, thêm một dòng mới với sid, progress và rs
+        new_row = pd.DataFrame({"sid": [sid], "progress": [progress], "rs": [rs]})
+        
+        # Loại bỏ các cột có toàn giá trị NA hoặc trống (nếu có)
+        new_row = new_row.dropna(axis=1, how="all")
+        
+        # Thực hiện concat sau khi xử lý
+        history4 = pd.concat([history4, new_row], ignore_index=True)
+    
+    # Lấy 4 hàng cuối của DataFrame
+    last_4_rows = history4.tail(4)
+    
+    # Kiểm tra nếu số dòng là 4 và không có giá trị NaN trong dữ liệu
+    if len(last_4_rows) == 4 and not last_4_rows.isna().any().any():
+        # Trả về 2 cột 'progress' và 'rs'
+        result = last_4_rows[["progress", "rs"]]
+        print(result)
+        return result
+    else:
+        print("Không thỏa mãn điều kiện (số dòng khác 4 hoặc có NaN).")
+        return None
+
+

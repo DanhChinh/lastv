@@ -99,22 +99,43 @@ class Model:
 
 # Chuẩn bị dữ liệu
 scaler, data, label = make_data()
+def canBangTiLe(test):
 
-# Tạo các mô hình
+    # classifiers[f"KNN"] = Model(KNeighborsClassifier(n_neighbors=5), f"KNN")
+    # classifiers[f"LogReg"] = Model(LogisticRegression(max_iter=1000), f"LogReg")
+    # classifiers[f"SVC"] = Model(SVC(probability=True, kernel='rbf'), f"SVC")
+    # classifiers[f"DT"] = Model(DecisionTreeClassifier(max_depth=5), f"DT")
+    # classifiers[f"GNB"] = Model(GaussianNB(), f"GNB")
+    # classifiers[f"MLP"] = Model(MLPClassifier(hidden_layer_sizes=(50,), max_iter=500), f"MLP")
+    # classifiers[f"GB"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3), f"GB")
+    # classifiers[f"Ada"] = Model(AdaBoostClassifier(n_estimators=50), f"Ada")
 
+    models = {
+        "KNN": KNeighborsClassifier(n_neighbors=5),
+        "LogReg": LogisticRegression(max_iter=1000),
+        "SVC": SVC(probability=True, kernel='rbf'),
+        "DT": DecisionTreeClassifier(max_depth=5),
+        "GNB": GaussianNB(),
+        "MLP": MLPClassifier(hidden_layer_sizes=(50,), max_iter=500),
+        "GB": GradientBoostingClassifier(n_estimators=100, max_depth=3),
+        "Ada": AdaBoostClassifier(n_estimators=50)
+    }
 
-def make_dict():
-    # classifiers[f"RandomForest"] = Model(RandomForestClassifier(n_estimators=100, max_depth=5), f"RF")
-    classifiers[f"KNN"] = Model(KNeighborsClassifier(n_neighbors=5), f"KNN")
-    classifiers[f"LogReg"] = Model(LogisticRegression(max_iter=1000), f"LogReg")
-    classifiers[f"SVC"] = Model(SVC(probability=True, kernel='rbf'), f"SVC")
-    classifiers[f"DT"] = Model(DecisionTreeClassifier(max_depth=5), f"DT")
-    classifiers[f"GNB"] = Model(GaussianNB(), f"GNB")
-    classifiers[f"MLP"] = Model(MLPClassifier(hidden_layer_sizes=(50,), max_iter=500), f"MLP")
-    classifiers[f"GB"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3), f"GB")
-    classifiers[f"Ada"] = Model(AdaBoostClassifier(n_estimators=50), f"Ada")
-
-
+    for name, clf in models.items():
+        probs = 0
+        while probs != 0.5:
+            x_train, _, y_train, _ = train_test_split(
+                data, label,
+                train_size=0.5,
+                test_size=0.1#,
+                #shuffle=True,
+                # stratify=label
+            )
+            clf.fit(X_train, y_train)
+            probs = clf.predict_proba(X_test)[:, 1]
+        positive_ratio = np.mean(probs >= 0.5)  # Tỷ lệ dự đoán là nhãn 1
+        if abs(positive_ratio - 0.5) < 0.1:  # Cho phép lệch 10%
+            classifiers[name] = Model(clf, name)
 
 
 
@@ -150,5 +171,5 @@ def reRenderTable():
     return table
 
 classifiers = {}
-make_dict()
-#reset persent
+
+

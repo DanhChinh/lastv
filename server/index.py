@@ -7,20 +7,33 @@ app = Flask(__name__)
 CORS(app)  # Bật CORS cho toàn bộ ứng dụng
 socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả nguồn
 
+
 @socketio.on('xulydulieu')
 def handle_xulydulieu(msg):
     sid = msg.get('sid')
     progress = msg.get('progress')
-    prd, value, table = my_predict(sid, progress)
-    emit('server_message', {"predict": prd, "value":value, "table":table})
-    print()
+    # if isInit:
+    #     prd, value, table = my_predict(sid, progress)
+    #     emit('server_message', {"predict": prd, "value":value, "table":table})
+    # else:
+    #     addHistory(sid, progress, None)
+
 @socketio.on('kiemtradulieu')
 def handle_kiemtradulieu(msg):
     sid = msg.get('sid')
-    rs = msg.get('rs')   
-    table = check(sid, rs)
-    emit('server_message', {"predict": 0, "value":0, "table":table})
-
+    rs = msg.get('rs')
+    
+    # if isInit:
+    #     table = check(sid, rs)
+    #     emit('server_message', {"predict": 0, "value":0, "table":table})
+    # else:
+    #     addHistory(sid, None, rs)
+@socketio.on('khoitao')
+def handle_khoitao(msg):
+    data4 = msg.get('data4')
+    print(data4)
+    # make_dict()      
+    # emit('server_message', {"predict": 0, "value":0, "table":reRenderTable()}) 
 @socketio.on('reLoadAgl')
 def handle_reLoadAgl(msg):
     name = msg.get('name') 
