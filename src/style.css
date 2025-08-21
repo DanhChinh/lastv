@@ -9,8 +9,6 @@ html, body {
   overflow: auto;
   scrollbar-width: none;         /* Firefox */
   -ms-overflow-style: none;      /* IE, Edge */
-
-  background-image: url('../background.jpg');
 }
 
 html::-webkit-scrollbar,

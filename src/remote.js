@@ -8,7 +8,6 @@ DOM_accessToken.value = accessTokenStorege;
 
 DOM_isPlay.onclick = (e) => {
   isPlay = !isPlay;
-  e.target.textContent = isPlay ? "Playing..." : "play";
   e.target.style.backgroundColor = isPlay ? "green" : "red";
 };
 
@@ -21,7 +20,6 @@ DOM_isConnectGame.onclick = (e) => {
     return;
   }
   isConnectGame = !isConnectGame;
-  e.target.textContent = isConnectGame ? "Connected" : "Connect";
   e.target.style.backgroundColor = isConnectGame ? "green" : "red";
 
   isConnectGame ? socket_connect() : socket.close();
@@ -46,8 +44,6 @@ DOM_connectPyserver.onclick = (e) => {
   socket_io = io("http://localhost:5000");
 
   socket_io.on("connect", () => {
-    console.log("✅ Đã kết nối tới server!");
-    e.target.textContent = "Connected" ;
     e.target.style.backgroundColor = "green" ;
   });
   socket_io.on("server_message", (msg) => {
@@ -109,10 +105,10 @@ function renderTable(data) {
     });
 
     html += `<td>
-              <button onclick="handleReLoadAgl('${row['name']}', 'reload' )">🔄</button>
+              <button onclick="handleReLoadAgl('${row['name']}', 'reload' )">⟲</button>
             </td>`
     html += `<td>
-            <button onclick="handleReLoadAgl('${row['name']}', 'delete')">🗑️</button>
+            <button onclick="handleReLoadAgl('${row['name']}', 'delete')">✖</button>
           </td>`
     html += "</tr>";
   });

@@ -31,23 +31,25 @@ class Model:
         self.predict = None
         self.predict_fix = None
         self.percent = 0
-        self.isTrue = 0
-        self.isFalse = 0
+        self.isTrue = 1
+        self.isFalse = 1
         self.score = 0
         self.state = "WT"
-        while self.balance > 0.51 or self.balance< 0.49:
-            x_train, self.x_test, y_train, y_test = train_test_split(
+        while self.balance !=0.5:
+            x_train, _, y_train, _ = train_test_split(
                 data, label,
-                train_size=0.5,
+                train_size=0.2,
                 test_size=0.1#,
                 #shuffle=True,
                 # stratify=label
             )
+
+
             self.model.fit(x_train, y_train)
-            y_pred = self.model.predict(self.x_test)
+            y_pred = self.model.predict(x_test)
             self.mask = y_pred == y_test
             self.balance = round(sum(self.mask) / len(self.mask), 2)
-        print("Khoi tao:", self.model_name)
+        print("Khoi tao:", self.model_name, self.balance)
 
     def make_predict(self, sid, x_pred):
         self.sid = sid
@@ -85,57 +87,14 @@ class Model:
         if len(profits) == 0:
             profits = ''
         return {
-            #"state":self.state,
             "name": f"{self.model_name}",
             "true": self.isTrue,
             "false": self.isFalse,
             "percent": float(self.percent),
-            #"predict": f"{self.predict}{self.predict_fix}",
-            #'score':self.score,
-            'profit':self.profit,
-            #'profits': profits
+            'profit':self.profit
         }
 
 
-# Chuẩn bị dữ liệu
-scaler, data, label = make_data()
-def canBangTiLe(test):
-
-    # classifiers[f"KNN"] = Model(KNeighborsClassifier(n_neighbors=5), f"KNN")
-    # classifiers[f"LogReg"] = Model(LogisticRegression(max_iter=1000), f"LogReg")
-    # classifiers[f"SVC"] = Model(SVC(probability=True, kernel='rbf'), f"SVC")
-    # classifiers[f"DT"] = Model(DecisionTreeClassifier(max_depth=5), f"DT")
-    # classifiers[f"GNB"] = Model(GaussianNB(), f"GNB")
-    # classifiers[f"MLP"] = Model(MLPClassifier(hidden_layer_sizes=(50,), max_iter=500), f"MLP")
-    # classifiers[f"GB"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3), f"GB")
-    # classifiers[f"Ada"] = Model(AdaBoostClassifier(n_estimators=50), f"Ada")
-
-    models = {
-        "KNN": KNeighborsClassifier(n_neighbors=5),
-        "LogReg": LogisticRegression(max_iter=1000),
-        "SVC": SVC(probability=True, kernel='rbf'),
-        "DT": DecisionTreeClassifier(max_depth=5),
-        "GNB": GaussianNB(),
-        "MLP": MLPClassifier(hidden_layer_sizes=(50,), max_iter=500),
-        "GB": GradientBoostingClassifier(n_estimators=100, max_depth=3),
-        "Ada": AdaBoostClassifier(n_estimators=50)
-    }
-
-    for name, clf in models.items():
-        probs = 0
-        while probs != 0.5:
-            x_train, _, y_train, _ = train_test_split(
-                data, label,
-                train_size=0.5,
-                test_size=0.1#,
-                #shuffle=True,
-                # stratify=label
-            )
-            clf.fit(X_train, y_train)
-            probs = clf.predict_proba(X_test)[:, 1]
-        positive_ratio = np.mean(probs >= 0.5)  # Tỷ lệ dự đoán là nhãn 1
-        if abs(positive_ratio - 0.5) < 0.1:  # Cho phép lệch 10%
-            classifiers[name] = Model(clf, name)
 
 
 
@@ -170,6 +129,37 @@ def reRenderTable():
         table.append(model.to_dict())
     return table
 
+def handleData4(data4):
+    global x_test, y_test
+    for data in data4:
+        x_pred = handle_progress(data['progress'], isEnd=False)
+        x_pred = scaler.transform([x_pred])
+        x_pred = np.round(x_pred, 1)
+
+        x_test.append(x_pred[0])
+        y_test.append(data['rs'])
+    x_test = np.array(x_test)
+    y_test = np.array(y_test)
+def canBangTiLe():
+    classifiers["KNN"] = Model(KNeighborsClassifier(n_neighbors=5), "KNN")
+    classifiers["LogR"] = Model(LogisticRegression(max_iter=1000), "LogR")
+    classifiers["SVC"] = Model(SVC(probability=True, kernel='rbf'), "SVC")
+    classifiers["DT"] = Model(DecisionTreeClassifier(max_depth=5), "DT")
+    classifiers["GNB"] = Model(GaussianNB(), "GNB")
+    classifiers["MLP"] = Model(MLPClassifier(hidden_layer_sizes=(50,), max_iter=500), "MLP")
+    classifiers["GB"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3), "GB")
+    classifiers["Ada"] = Model(AdaBoostClassifier(n_estimators=50), "Ada")
+
+
+
+
+
+#main
 classifiers = {}
+scaler, data, label = make_data()
+x_test = [] 
+y_test = []
+
+
 
 

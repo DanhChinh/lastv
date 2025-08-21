@@ -19,7 +19,7 @@ function getHistory() {
   function updateHistory(sid, progress, rs) {
     if(progress === null || rs === null){return}
     const history = getHistory();
-    while(history.length >=4){
+    while(history.length >=10){
       history.shift();
     }
   
@@ -35,41 +35,29 @@ function getHistory() {
     saveHistory(history);
   }
   
-  // Hàm in ra toàn bộ history
-  function printHistory() {
-    const history = getHistory();
-    console.log("History:", history);
-  }
-  
-  // Hàm xóa toàn bộ history
-  function clearHistory() {
-    localStorage.removeItem("history");
-    console.log("Đã xóa history.");
-  }
-  
 
 
-  function getLast4CompleteRecords() {
+
+  function getLastCompleteRecords(number = 10) {
     const history = getHistory();
     
-    // Lấy 4 phần tử cuối cùng từ history
-    const last4 = history.slice(-4); 
+    const last = history.slice(-number); 
   
     // Kiểm tra tính liên tục của sid
-    const isContinuous = last4.every((item, index, arr) => {
+    const isContinuous = last.every((item, index, arr) => {
       if (index === 0) return true;  // Bỏ qua phần tử đầu tiên
       return arr[index].sid === arr[index - 1].sid + 1; // Kiểm tra liệu sid có tăng dần
     });
   
     // Kiểm tra các phần tử có đầy đủ dữ liệu và sid liên tục
-    const isValid = last4.length === 4 && last4.every(
+    const isValid = last.length === number && last.every(
       item => item.sid != null && item.progress != null && item.rs != null
     ) && isContinuous; // Thêm kiểm tra tính liên tục của sid
   
     if (!isValid) {
       // Thông báo rõ ràng trong các trường hợp lỗi
-      if (last4.length < 4) {
-        console.log("Chưa đủ 4 bản ghi hợp lệ.");
+      if (last.length < number) {
+        console.log("Chưa đủ number bản ghi hợp lệ.");
       } else if (!isContinuous) {
         console.log("sid không liên tục. Các giá trị sid cần phải tăng dần mà không có khoảng trống.");
       } else {
@@ -78,8 +66,8 @@ function getHistory() {
       return null;
     }
   
-    // Nếu hợp lệ, trả về 4 bản ghi với progress và rs
-    return last4.map(({ progress, rs }) => ({ progress, rs }));
+    // Nếu hợp lệ, trả về number bản ghi với progress và rs
+    return last.map(({ progress, rs }) => ({ progress, rs }));
   }
   
   

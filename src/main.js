@@ -88,11 +88,14 @@ function socket_connect() {
         record.progress.push(JSON.parse(JSON.stringify(mgs.bs)));
 
         if (record.progress.length === 35) {
-          socket_io.emit("xulydulieu",{
+          progress35 = JSON.stringify(record.progress)
+
+          if(sendHistory4){
+                      socket_io.emit("xulydulieu",{
             'sid':record.sid ||1,
             'progress':JSON.stringify(record.progress)
           });
-          progress35 = JSON.stringify(record.progress)
+          }
         }
         return;
       }
@@ -110,13 +113,16 @@ function socket_connect() {
         checkPrd(BOT.predict, rs, BOT.value);
         BOT.checkPrd(rs);
         BOT.updateDom('checkPrd(rs)');
-        socket_io.emit("kiemtradulieu", {
+
+        if(sendHistory4){
+                  socket_io.emit("kiemtradulieu", {
           'sid':record.sid ||1,
           'rs':rs==1?1:0
         })
+        }
 
         updateHistory(record.sid, progress35, rs==1?1:0)
-        let data4 = getLast4CompleteRecords()
+        let data4 = getLastCompleteRecords()
         if(data4 && !sendHistory4){
           console.log("emit data4")
           socket_io.emit("khoitao", {
