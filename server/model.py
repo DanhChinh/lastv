@@ -72,6 +72,9 @@ class Model:
             self.isTrue+=1
         else:
             self.isFalse+=1
+        if self.isTrue + self.isFalse > 30:
+            self.reset()
+            return
         if self.predict_fix == result:
             self.profit += self.score
         else:
@@ -131,6 +134,8 @@ def reRenderTable():
 
 def handleData4(data4):
     global x_test, y_test
+    x_test=[]
+    y_test=[]
     for data in data4:
         x_pred = handle_progress(data['progress'], isEnd=False)
         x_pred = scaler.transform([x_pred])

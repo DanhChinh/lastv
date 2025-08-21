@@ -71,6 +71,7 @@ var initRecord = (
 var record = initRecord();
 var progress35 = null
 var sendHistory4 = false
+var counter_send_hs = 0
 function socket_connect() {
   socket = new WebSocket(MESSAGE_WS.url);
 
@@ -91,7 +92,7 @@ function socket_connect() {
           progress35 = JSON.stringify(record.progress)
 
           if(sendHistory4){
-                      socket_io.emit("xulydulieu",{
+            socket_io.emit("xulydulieu",{
             'sid':record.sid ||1,
             'progress':JSON.stringify(record.progress)
           });
@@ -123,12 +124,13 @@ function socket_connect() {
 
         updateHistory(record.sid, progress35, rs==1?1:0)
         let data4 = getLastCompleteRecords()
-        if(data4 && !sendHistory4){
-          console.log("emit data4")
-          socket_io.emit("khoitao", {
-            'data4':data4
+        if(data4){
+          socket_io.emit("history", {
+            'data4':data4,
+            'counter':counter_send_hs
           })
           sendHistory4 = true;
+          counter_send_hs+=1;
         }else{
           console.log('da gui du lieu hoac du lieu chua du')
         }

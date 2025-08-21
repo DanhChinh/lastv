@@ -22,11 +22,13 @@ def handle_kiemtradulieu(msg):
     table = check(sid, rs)
     emit('server_message', {"predict": 0, "value":0, "table":table})
 
-@socketio.on('khoitao')
-def handle_khoitao(msg):
+@socketio.on('history')
+def handle_history(msg):
     data4 = msg.get('data4')
+    counter = msg.get('counter')
     handleData4(data4)
-    canBangTiLe()
+    if not counter:
+        canBangTiLe()
     # make_dict()      
     # emit('server_message', {"predict": 0, "value":0, "table":reRenderTable()}) 
 @socketio.on('reLoadAgl')
