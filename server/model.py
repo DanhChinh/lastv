@@ -101,6 +101,9 @@ class Model:
 
         if self.predict_fix == result:
             self.profit += self.score
+            if self.profit >=30:
+                self.reset:
+                return
         else:
             self.profit -= self.score
             if self.profit<=-10:
