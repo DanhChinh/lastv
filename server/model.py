@@ -10,6 +10,7 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
+import copy
 def getScore(percent, length):
     length = min(length, 13)
     p = length/13
@@ -17,6 +18,28 @@ def getScore(percent, length):
         return 0
     score = (percent - 0.5)*p
     return int(score*100)
+
+
+def hamdanhgia(mang, alpha=1.0, beta=1.0):
+    # Tính cumulative sum
+    cum = np.cumsum(mang)
+    
+    # Tính số lần đổi dấu (dao động quanh 0)
+    sign_cum = np.sign(cum)
+    sign_diff = np.diff(sign_cum)
+    
+    # Đếm số lần đổi dấu không qua zero (tức là ±1 → ∓1)
+    crossings = np.sum((sign_diff != 0) & (sign_cum[:-1] != 0) & (sign_cum[1:] != 0))
+
+    # Tính phương sai của cumulative sum
+    var = np.var(cum)
+    
+    # Tiêu chí đánh giá:
+    # Ưu tiên nhiều lần cắt qua 0 (crossings cao) và phương sai nhỏ (var thấp)
+    # Tăng alpha để nhấn mạnh crossings, tăng beta để nhấn mạnh var
+    score = alpha * crossings - beta * var
+    return score
+
 class Model:
     def __init__(self, model, model_name):
         self.model = model
@@ -35,21 +58,24 @@ class Model:
         self.isFalse = 1
         self.score = 0
         self.state = "WT"
-        while self.balance !=0.5:
+        self.bestScore = -999
+        self.bestModel = None
+        for  i in range(20):
             x_train, _, y_train, _ = train_test_split(
                 data, label,
                 train_size=0.2,
-                test_size=0.1#,
-                #shuffle=True,
-                # stratify=label
+                test_size=0.1#
             )
-
-
             self.model.fit(x_train, y_train)
             y_pred = self.model.predict(x_test)
-            self.mask = y_pred == y_test
-            self.balance = round(sum(self.mask) / len(self.mask), 2)
-        print("Khoi tao:", self.model_name, self.balance)
+            mask = y_pred == y_test
+            moi = [1 if x != 0 else -1 for x in mask]
+            score = hamdanhgia(moi)
+            if score> self.bestScore:
+                self.bestScore = score
+                self.bestModel = copy.deepcopy(self.model)
+                print(self.model_name, score)
+        self.model = self.bestModel
 
     def make_predict(self, sid, x_pred):
         self.sid = sid
@@ -72,17 +98,15 @@ class Model:
             self.isTrue+=1
         else:
             self.isFalse+=1
-        if self.isTrue + self.isFalse > 30:
-            self.reset()
-            return
+
         if self.predict_fix == result:
             self.profit += self.score
         else:
             self.profit -= self.score
+            if self.profit<=-10:
+                self.reset()
+                return
         self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
-        if self.percent==0.5 and (self.isTrue+self.isFalse)>=15:
-            self.profits.append(self.profit)
-            self.reset()
         self.predict = ''
         self.predict_fix = ''
     def to_dict(self):
@@ -155,7 +179,14 @@ def canBangTiLe():
     classifiers["GB"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3), "GB")
     classifiers["Ada"] = Model(AdaBoostClassifier(n_estimators=50), "Ada")
 
-
+    classifiers["KNN1"] = Model(KNeighborsClassifier(n_neighbors=5), "KNN1")
+    classifiers["LogR1"] = Model(LogisticRegression(max_iter=1000), "LogR1")
+    classifiers["SVC1"] = Model(SVC(probability=True, kernel='rbf'), "SVC1")
+    classifiers["DT1"] = Model(DecisionTreeClassifier(max_depth=5), "DT1")
+    classifiers["GNB1"] = Model(GaussianNB(), "GNB1")
+    classifiers["MLP1"] = Model(MLPClassifier(hidden_layer_sizes=(50,), max_iter=500), "MLP1")
+    classifiers["GB1"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3), "GB1")
+    classifiers["Ada1"] = Model(AdaBoostClassifier(n_estimators=50), "Ada1")
 
 
 
