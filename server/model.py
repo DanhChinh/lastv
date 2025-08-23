@@ -68,13 +68,18 @@ class Model:
             )
             self.model.fit(x_train, y_train)
             y_pred = self.model.predict(x_test)
-            mask = y_pred == y_test
-            moi = [1 if x != 0 else -1 for x in mask]
-            score = hamdanhgia(moi)
-            if score> self.bestScore:
-                self.bestScore = score
-                self.bestModel = copy.deepcopy(self.model)
-                print(self.model_name, score)
+            try:
+                mask = y_pred == y_test
+                moi = [1 if x != 0 else -1 for x in mask]
+                score = hamdanhgia(moi)
+                if score> self.bestScore:
+                    self.bestScore = score
+                    self.bestModel = copy.deepcopy(self.model)
+                    print(i, self.model_name, score)
+            except:
+                print("gap loi:")
+                print(x_pred)
+                print(y_test)
         self.model = self.bestModel
 
     def make_predict(self, sid, x_pred):
@@ -102,7 +107,7 @@ class Model:
         if self.predict_fix == result:
             self.profit += self.score
             if self.profit >=30:
-                self.reset:
+                self.reset()
                 return
         else:
             self.profit -= self.score
@@ -182,14 +187,14 @@ def canBangTiLe():
     classifiers["GB"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3), "GB")
     classifiers["Ada"] = Model(AdaBoostClassifier(n_estimators=50), "Ada")
 
-    classifiers["KNN1"] = Model(KNeighborsClassifier(n_neighbors=5), "KNN1")
-    classifiers["LogR1"] = Model(LogisticRegression(max_iter=1000), "LogR1")
-    classifiers["SVC1"] = Model(SVC(probability=True, kernel='rbf'), "SVC1")
-    classifiers["DT1"] = Model(DecisionTreeClassifier(max_depth=5), "DT1")
-    classifiers["GNB1"] = Model(GaussianNB(), "GNB1")
-    classifiers["MLP1"] = Model(MLPClassifier(hidden_layer_sizes=(50,), max_iter=500), "MLP1")
-    classifiers["GB1"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3), "GB1")
-    classifiers["Ada1"] = Model(AdaBoostClassifier(n_estimators=50), "Ada1")
+    # classifiers["KNN1"] = Model(KNeighborsClassifier(n_neighbors=5), "KNN1")
+    # classifiers["LogR1"] = Model(LogisticRegression(max_iter=1000), "LogR1")
+    # classifiers["SVC1"] = Model(SVC(probability=True, kernel='rbf'), "SVC1")
+    # classifiers["DT1"] = Model(DecisionTreeClassifier(max_depth=5), "DT1")
+    # classifiers["GNB1"] = Model(GaussianNB(), "GNB1")
+    # classifiers["MLP1"] = Model(MLPClassifier(hidden_layer_sizes=(50,), max_iter=500), "MLP1")
+    # classifiers["GB1"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3), "GB1")
+    # classifiers["Ada1"] = Model(AdaBoostClassifier(n_estimators=50), "Ada1")
 
 
 

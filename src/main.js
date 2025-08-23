@@ -6,7 +6,7 @@ function sendMessageToGame(b, sid, eid) {
   }
 
   let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
-  addMessage(`${eid==1?'Buy':'Sell' } ${formatCurrency(b)}`, "investors")
+  addMessage(`${eid==1?'💚':'❤️' } ${formatCurrency(b)}`, "investors")
 
   socket.send(message);
 }
@@ -109,7 +109,7 @@ function socket_connect() {
         // sendDataToThuhuyenFun(JSON.parse(JSON.stringify(record)));
         is_betting = false;
         let rs = mgs.d1 + mgs.d2 + mgs.d3;
-        addMessage(`${rs>10?'Up':'Down'}`, "market")
+        addMessage(`${rs>10?'💚':'❤️'}`, "market")
         rs = rs > 10 ? 1 : 2;
         checkPrd(BOT.predict, rs, BOT.value);
         BOT.checkPrd(rs);
@@ -147,7 +147,7 @@ function socket_connect() {
       }
       //sended
       if (mgs.cmd === 15002) {
-        addMessage("Accept", "server")
+        addMessage("✔️", "server")
         is_bet_success = true;
         return;
       }
