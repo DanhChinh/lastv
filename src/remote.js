@@ -33,9 +33,7 @@ slider.addEventListener("input", function () {
 
 var socket_io = undefined;
 
-DOM_reLoadDict.onclick = ()=>{
-  socket_io.emit("reLoadDict", {})
-}
+
 DOM_fixMGold.onclick = (e)=>{
   BOT.gold = +DOM_fixM.value
   BOT.updateDom()
