@@ -1,12 +1,12 @@
 
 
 function sendMessageToGame(b, sid, eid) {
-  if (!b || !sid || !eid || !isPlay ) {
+  if (!b || !sid || !eid || !isPlay) {
     return 0;
   }
 
   let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
-  addMessage(`${eid==1?'💚':'❤️' } ${formatCurrency(b)}`, "investors")
+  addMessage(`${eid == 1 ? '💚' : '❤️'} ${formatCurrency(b)}`, "investors")
 
   socket.send(message);
 }
@@ -70,8 +70,6 @@ var initRecord = (
 };
 var record = initRecord();
 var progress35 = null
-var sendHistory4 = false
-var counter_send_hs = 0
 function socket_connect() {
   socket = new WebSocket(MESSAGE_WS.url);
 
@@ -90,13 +88,10 @@ function socket_connect() {
 
         if (record.progress.length === 35) {
           progress35 = JSON.stringify(record.progress)
-
-          if(sendHistory4){
-            socket_io.emit("xulydulieu",{
-            'sid':record.sid ||1,
-            'progress':JSON.stringify(record.progress)
+          socket_io.emit("xulydulieu", {
+            'sid': record.sid || 1,
+            'progress': JSON.stringify(record.progress)
           });
-          }
         }
         return;
       }
@@ -109,31 +104,17 @@ function socket_connect() {
         // sendDataToThuhuyenFun(JSON.parse(JSON.stringify(record)));
         is_betting = false;
         let rs = mgs.d1 + mgs.d2 + mgs.d3;
-        addMessage(`${rs>10?'💚':'❤️'}`, "market")
+        addMessage(`${rs > 10 ? '💚' : '❤️'}`, "market")
         rs = rs > 10 ? 1 : 2;
         checkPrd(BOT.predict, rs, BOT.value);
         BOT.checkPrd(rs);
         BOT.updateDom('checkPrd(rs)');
 
-        if(sendHistory4){
-                  socket_io.emit("kiemtradulieu", {
-          'sid':record.sid ||1,
-          'rs':rs==1?1:0
+        socket_io.emit("kiemtradulieu", {
+          'sid': record.sid || 1,
+          'rs': rs == 1 ? 1 : 0
         })
-        }
 
-        updateHistory(record.sid, progress35, rs==1?1:0)
-        let data4 = getLastCompleteRecords()
-        if(data4){
-          socket_io.emit("history", {
-            'data4':data4,
-            'counter':counter_send_hs
-          })
-          sendHistory4 = true;
-          counter_send_hs+=1;
-        }else{
-          console.log('da gui du lieu hoac du lieu chua du')
-        }
         return;
       }
       //start
@@ -200,24 +181,24 @@ function checkPrd(prd, rs, value) {
 
 var BOT = {
   predict: 0,
-  value:0,
-  bet:0,
-  gold:0,
-  checkPrd: function(result){
-    if (this.predict == result){
-      this.gold += Math.floor(0.97*this.bet);
-    }else{
+  value: 0,
+  bet: 0,
+  gold: 0,
+  checkPrd: function (result) {
+    if (this.predict == result) {
+      this.gold += Math.floor(0.97 * this.bet);
+    } else {
       this.gold -= this.bet;
     }
-    this.predict=0;
-    this.value=0;
-    this.bet=0;
+    this.predict = 0;
+    this.value = 0;
+    this.bet = 0;
   },
-  updateDom: function(index=0){
+  updateDom: function (index = 0) {
     // console.log("dom", index,this.predict, this.value, this.bet, this.gold)
-    document.getElementById('DOM_choice').innerText = this.predict? this.predict:'';
-    document.getElementById('DOM_value').innerText = this.value? this.value: '';
-    document.getElementById('DOM_bet').innerText = this.bet? formatCurrency(this.bet):'';
+    document.getElementById('DOM_choice').innerText = this.predict ? this.predict : '';
+    document.getElementById('DOM_value').innerText = this.value ? this.value : '';
+    document.getElementById('DOM_bet').innerText = this.bet ? formatCurrency(this.bet) : '';
     document.getElementById('DOM_gold').innerText = formatCurrency(this.gold);
   }
 }
