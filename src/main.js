@@ -41,9 +41,10 @@ function sendDataToThuhuyenFun(record) {
   data.append("d2", record.d2);
   data.append("d3", record.d3);
   axios
-    .post("https://thuhuyen.fun/xg79/post_data.php", data)
+    .post("https://cyan.io.vn/xg79/post_data.php", data)
     .then((response) => {
       if (response.data.success) {
+        console.log(response.data.message)
         addMessage("save->done", "server");
       } else {
         console.error("Lỗi: " + response.data.message);
@@ -101,7 +102,7 @@ function socket_connect() {
         record.d1 = mgs.d1;
         record.d2 = mgs.d2;
         record.d3 = mgs.d3;
-        // sendDataToThuhuyenFun(JSON.parse(JSON.stringify(record)));
+        sendDataToThuhuyenFun(JSON.parse(JSON.stringify(record)));
         is_betting = false;
         let rs = mgs.d1 + mgs.d2 + mgs.d3;
         addMessage(`${rs > 10 ? '💚' : '❤️'}`, "market")
