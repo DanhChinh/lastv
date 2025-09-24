@@ -1,6 +1,7 @@
 import json, math
 import numpy as np
 import pandas as pd
+from getDb import get_data_from_api
 def lam_tron_bac_thu_2(n):
     if n == 0:
         return 0
@@ -41,7 +42,13 @@ def handle_progress(progress, isEnd = True):
     return [bc2, bc1, v2, v1, bc2-bc1, v2-v1]
 
 def make_data():
-    df = pd.read_csv("data.csv")
+    url = 'https://cyan.io.vn/xg79/get_data.php'
+    df = get_data_from_api(url)
+
+    if df is not None:
+        print("Dữ liệu lấy thành công:")
+    else:
+        print("Lỗi khi lấy dữ liệu.")
     data_perfect = []
     label_perfect = []
     for index, row in df.iterrows():
