@@ -13,6 +13,8 @@ def handle_xulydulieu(msg):
     sid = msg.get('sid')
     progress = msg.get('progress')
     prd, value, table = my_predict(sid, progress)
+
+    print(sid, prd, value)
     emit('server_message', {"predict": prd, "value":value, "table":table})
 
 @socketio.on('kiemtradulieu')

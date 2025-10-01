@@ -37,9 +37,9 @@ def handle_progress(progress, isEnd = True):
         v1.append(pair[1]['v'])
     bc2 = tinh_trung_binh_lam_tron_bac_thu_2(bc2)
     bc1 = tinh_trung_binh_lam_tron_bac_thu_2(bc1)
-    v2 = tinh_trung_binh_lam_tron_bac_thu_2(v2)
-    v1 = tinh_trung_binh_lam_tron_bac_thu_2(v1)
-    return [bc2, bc1, v2, v1, bc2-bc1, v2-v1]
+    v2 = tinh_trung_binh_lam_tron_bac_thu_2(v2)//1000000
+    v1 = tinh_trung_binh_lam_tron_bac_thu_2(v1)//1000000
+    return [bc2, bc1, v2, v1]
 
 def make_data():
     df = get_data_from_api()

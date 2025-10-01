@@ -11,19 +11,15 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 import copy
-# def getScore(percent, length):
-#     length = min(length, 13)
-#     p = length/13
-#     if percent== 0 or percent==1 :
-#         return 0
-#     score = (percent - 0.5)*p
-#     return int(score*100)
-
-def getScore(percent):
-    if  percent==0 or percent==1:
+def getScore(percent, length):
+    length = min(length, 13)
+    p = length/13
+    if percent== 0 or percent==1 :
         return 0
-    score = (percent - 0.5)
+    score = (percent - 0.5)*p
     return int(score*100)
+
+
 
 
 class Model:
@@ -48,7 +44,7 @@ class Model:
         self.state = "BT"
         self.predict = int(self.model.predict(x_pred)[0])
 
-        self.score = getScore(self.percent)
+        self.score = getScore(self.percent, self.isTrue+ self.isFalse)
         if self.score>0:
             self.predict_fix = int(not self.predict)
         else:
