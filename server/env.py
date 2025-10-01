@@ -42,8 +42,7 @@ def handle_progress(progress, isEnd = True):
     return [bc2, bc1, v2, v1, bc2-bc1, v2-v1]
 
 def make_data():
-    url = 'https://cyan.io.vn/xg79/get_data.php'
-    df = get_data_from_api(url)
+    df = get_data_from_api()
 
     if df is not None:
         print("Dữ liệu lấy thành công:")

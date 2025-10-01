@@ -1,10 +1,10 @@
 import requests
 import pandas as pd
 
-def get_data_from_api(url):
+def get_data_from_api():
     try:
         # Gửi yêu cầu GET tới API
-        response = requests.get(url)
+        response = requests.get('https://cyan.io.vn/xg79/get_data.php')
 
         # Kiểm tra nếu yêu cầu thành công
         if response.status_code == 200:
@@ -41,3 +41,5 @@ def get_data_from_api(url):
     except Exception as e:
         print(f"Lỗi: {e}")
         return None
+
+

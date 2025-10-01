@@ -11,14 +11,19 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 import copy
-def getScore(percent, length):
-    length = min(length, 13)
-    p = length/13
-    if percent== 0 or percent==1 :
-        return 0
-    score = (percent - 0.5)*p
-    return int(score*100)
+# def getScore(percent, length):
+#     length = min(length, 13)
+#     p = length/13
+#     if percent== 0 or percent==1 :
+#         return 0
+#     score = (percent - 0.5)*p
+#     return int(score*100)
 
+def getScore(percent):
+    if  percent==0 or percent==1:
+        return 0
+    score = (percent - 0.5)
+    return int(score*100)
 
 
 class Model:
@@ -66,6 +71,9 @@ class Model:
         else:
             self.profit -= self.score
         self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
+
+        if self.percent==0.5 and (self.isTrue+self.isFalse)>=15:
+            self.reset()
         self.predict = ''
         self.predict_fix = ''
     def to_dict(self):
