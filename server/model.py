@@ -48,7 +48,7 @@ class Model:
         self.state = "BT"
         self.predict = int(self.model.predict(x_pred)[0])
 
-        self.score = getScore(self.percent, self.isTrue+ self.isFalse)
+        self.score = getScore(self.percent)
         if self.score>0:
             self.predict_fix = int(not self.predict)
         else:
