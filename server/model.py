@@ -23,12 +23,12 @@ def getScore(percent, length):
 
 
 class Model:
-    def __init__(self, model, model_name):
+    def __init__(self, model, data, label ,model_name):
         self.model = model
         self.model_name = model_name
         self.profit = 0
-        self.reset()
-    def reset(self):
+        self.reset(data, label)
+    def reset(self, data, label):
         self.profit = 0
         self.predict = None
         self.predict_fix = None
@@ -117,19 +117,29 @@ def reRenderTable():
 
 
 def khoiTao():
-    classifiers["KNN"] = Model(KNeighborsClassifier(n_neighbors=5), "KNN")
-    classifiers["LogR"] = Model(LogisticRegression(max_iter=1000), "LogR")
-    classifiers["SVC"] = Model(SVC(probability=True, kernel='rbf'), "SVC")
-    classifiers["DT"] = Model(DecisionTreeClassifier(max_depth=5), "DT")
-    classifiers["GNB"] = Model(GaussianNB(), "GNB")
-    classifiers["MLP"] = Model(MLPClassifier(hidden_layer_sizes=(50,), max_iter=500), "MLP")
-    classifiers["GB"] = Model(GradientBoostingClassifier(n_estimators=100, max_depth=3), "GB")
-    classifiers["Ada"] = Model(AdaBoostClassifier(n_estimators=50), "Ada")
+    models = [
+        KNeighborsClassifier(n_neighbors=5),
+        LogisticRegression(max_iter=1000),
+        SVC(probability=True, kernel='rbf'),
+        DecisionTreeClassifier(max_depth=5),
+        GaussianNB(),
+        MLPClassifier(hidden_layer_sizes=(50,), max_iter=500),
+        GradientBoostingClassifier(n_estimators=100, max_depth=3),
+        AdaBoostClassifier(n_estimators=50)
+    ]
+    data, label = make_data()
+    data_chunks = np.array_split(data, 24)
+    label_chunks = np.array_split(label, 24)
+    for i in range(24):
+        dt = data_chunks[i]
+        lb = label_chunks[i]
+        index = i%8
+        classifiers[f"{i}"] = Model(models[index], dt, lb, f"{i}_{i%8}")
+
 
 
 
 #main
-data, label = make_data()
 classifiers = {}
 khoiTao()
 x_test = [] 
