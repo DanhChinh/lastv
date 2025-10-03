@@ -38,7 +38,8 @@ class Model:
         self.score = 0
         self.state = "WT"
         self.sid = None
-        self.model.fit(data, label)
+        if data:
+            self.model.fit(data, label)
     def make_predict(self, sid, x_pred):
         self.sid = sid
         self.state = "BT"
@@ -69,7 +70,7 @@ class Model:
         self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
 
         if self.percent==0.5 and (self.isTrue+self.isFalse)>=15:
-            self.reset()
+            self.reset(None, None)
         self.predict = ''
         self.predict_fix = ''
     def to_dict(self):
