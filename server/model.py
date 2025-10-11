@@ -11,41 +11,28 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 import copy
-def getScore(percent, length):
-    length = min(length, 13)
-    p = length/13
-    if percent== 0 or percent==1 :
-        return 0
-    score = (percent - 0.5)*p
-    return int(score*100)
+def getScore(history):
+    l = len(history)
+    return sum(history) - (l/2)
 
 
 
 
 class Model:
-    def __init__(self, model, data, label ,model_name):
+    def __init__(self, model ,model_name):
         self.model = model
         self.model_name = model_name
-        self.profit = 0
-        self.reset(data, label)
+        self.reset()
     def reset(self, data, label):
-        self.profit = 0
         self.predict = None
         self.predict_fix = None
-        self.percent = 0
-        self.isTrue = 0
-        self.isFalse = 0
-        self.score = 0
-        self.state = "WT"
-        self.sid = None
-        if data:
-            self.model.fit(data, label)
+        self.history = []
+        self.isSelect = False
+        indices = np.random.choice(len(data), size=1000, replace=False)
+        self.model.fit(data[indices], label[indices])
     def make_predict(self, sid, x_pred):
-        self.sid = sid
-        self.state = "BT"
         self.predict = int(self.model.predict(x_pred)[0])
-
-        self.score = getScore(self.percent, self.isTrue+ self.isFalse)
+        self.score = getScore(self.history)
         if self.score>0:
             self.predict_fix = int(not self.predict)
         else:
@@ -53,34 +40,20 @@ class Model:
             self.score = abs(self.score)
 
     def check(self, result, sid):
-        if self.sid is None or self.sid != sid:
-            self.state = "ERR"
+        if self.predict is None:
             return
-        self.state = "UPDATE"
-
-        if self.predict == result:
-            self.isTrue+=1
-        else:
-            self.isFalse+=1
-
-        if self.predict_fix == result:
-            self.profit += self.score
-        else:
-            self.profit -= self.score
-        self.percent = round(self.isTrue/(self.isFalse+self.isTrue), 3)
-
-        if self.percent==0.5 and (self.isTrue+self.isFalse)>=15:
-            self.reset(None, None)
-        self.predict = ''
-        self.predict_fix = ''
+        self.history.append(int(self.predict == result))
+        self.history = self.history[-30:]
+        self.predict = None
+        self.predict_fix = None
     def to_dict(self):
         return {
             "name": f"{self.model_name}",
-            "true": self.isTrue,
-            "false": self.isFalse,
-            "percent": float(self.percent),
-            'profit':self.profit,
-            'predictf': self.predict_fix 
+            'predict':self.predict,
+            'predictf': self.predict_fix ,
+            'score':self.score,
+            'isSelect':self.isSelect,
+            'history': f"{self.history}"
         }
 
 
@@ -96,6 +69,8 @@ def my_predict(sid, progress):
     for idx, (name, model) in enumerate(classifiers.items()):
         model.make_predict(sid, [x_pred])
         table.append(model.to_dict())
+        if not model.isSelect:
+            continue
         if model.predict_fix == 1:
             c1+=model.score
         else:
@@ -128,19 +103,15 @@ def khoiTao():
         GradientBoostingClassifier(n_estimators=100, max_depth=3),
         AdaBoostClassifier(n_estimators=50)
     ]
-    data, label = make_data()
-    data_chunks = np.array_split(data, 24)
-    label_chunks = np.array_split(label, 24)
-    for i in range(24):
-        dt = data_chunks[i]
-        lb = label_chunks[i]
+
+    for i in range(16):
         index = i%8
-        classifiers[f"{i}"] = Model(models[index], dt, lb, f"{i}_{i%8}")
+        classifiers[f"{i}"] = Model(models[index], f"{i}_{i%8}")
 
 
 
 
-#main
+data, label = make_data()
 classifiers = {}
 khoiTao()
 x_test = [] 
