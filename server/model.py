@@ -19,7 +19,10 @@ def cumulative_sum(arr):
     result = []
     total = 0
     for num in arr:
-        total += num
+        if num == 1:
+            total += num
+        else:
+            total -= num
         result.append(total)
     return result
 
@@ -50,10 +53,7 @@ class Model:
     def check(self, result, sid):
         if self.predict is None:
             return
-        hs = -1
-        if self.predict == result:
-            hs = 1
-        self.history.append(hs)
+        self.history.append(int(self.predict == result))
         self.history = self.history[-30:]
         self.predict = None
         self.predict_fix = None
