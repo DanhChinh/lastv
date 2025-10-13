@@ -106,7 +106,7 @@ function renderTable(data) {
               <button onclick="handleReLoadAgl('${row['name']}', 'reload' )">⟲</button>
             </td>`
     html += `<td>
-            <button onclick="handleReLoadAgl('${row['name']}', 'delete')">✖</button>
+            <button onclick="handleReLoadAgl('${row['name']}', 'select')">✖</button>
           </td>`
     html += "</tr>";
   });

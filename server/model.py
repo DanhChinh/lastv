@@ -15,6 +15,13 @@ def getScore(history):
     l = len(history)
     return sum(history) - (l/2)
 
+def cumulative_sum(arr):
+    result = []
+    total = 0
+    for num in arr:
+        total += num
+        result.append(total)
+    return result
 
 
 
@@ -23,11 +30,12 @@ class Model:
         self.model = model
         self.model_name = model_name
         self.reset()
-    def reset(self, data, label):
+    def reset(self):
         self.predict = None
         self.predict_fix = None
         self.history = []
         self.isSelect = False
+        self.score = 0
         indices = np.random.choice(len(data), size=1000, replace=False)
         self.model.fit(data[indices], label[indices])
     def make_predict(self, sid, x_pred):
@@ -42,7 +50,10 @@ class Model:
     def check(self, result, sid):
         if self.predict is None:
             return
-        self.history.append(int(self.predict == result))
+        hs = -1
+        if self.predict == result:
+            hs = 1
+        self.history.append(hs)
         self.history = self.history[-30:]
         self.predict = None
         self.predict_fix = None
@@ -53,7 +64,8 @@ class Model:
             'predictf': self.predict_fix ,
             'score':self.score,
             'isSelect':self.isSelect,
-            'history': f"{self.history}"
+            'history': self.history,
+            'cumulative_sum': cumulative_sum(self.history)
         }
 
 
@@ -104,16 +116,21 @@ def khoiTao():
         AdaBoostClassifier(n_estimators=50)
     ]
 
-    for i in range(16):
-        index = i%8
-        classifiers[f"{i}"] = Model(models[index], f"{i}_{i%8}")
+    for model in models:
+        name = model.__class__.__name__
+        classifiers[name] = Model(model, name)
 
 
-
+def handle_Select(name):
+    isSelect = classifiers[name].isSelect
+    classifiers[name].isSelect = not isSelect
 
 data, label = make_data()
 classifiers = {}
 khoiTao()
+
+print(classifiers['KNeighborsClassifier'].isSelect)
+
 x_test = [] 
 y_test = []
 

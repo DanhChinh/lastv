@@ -122,3 +122,19 @@ tbody tr:hover {
   border-bottom: none;
 }
 
+#charts-root{
+  width: 100%;
+  min-height: 500px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.chart-container{
+  width: 30%;
+  height: 200px;
+  border: 1px solid black;
+  cursor: pointer;
+}
+.isSelect{
+  border: 5px solid green;
+}

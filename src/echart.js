@@ -147,15 +147,6 @@ function smoothData(data, windowSize=3) {
     return result;
 }
 
-function getCurrentTime() {
-    const now = new Date();
-
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0');
-
-    return `${hours}:${minutes}:${seconds}`;
-}
 
 
 
@@ -170,82 +161,3 @@ function getCurrentTime() {
 
 
 
-
-
-
-let dataObjects = [
-  { id: 'Object 1', values: [1, -1, 1, 1, -1] },
-  { id: 'Object 2', values: [-1, -1, 1, 1, 1] },
-  { id: 'Object 3', values: [1, 1, -1, -1, 1] }
-];
-
-// Hàm tính tổng cộng dồn
-function cumulativeSum(arr) {
-  let result = [];
-  arr.reduce((sum, val, i) => result[i] = sum + val, 0);
-  return result;
-}
-
-// Gốc chứa tất cả biểu đồ
-const root = document.getElementById('charts-root');
-console.log(root)
-
-// Lưu ECharts instances
-const chartInstances = {};
-
-// Vẽ biểu đồ cho từng đối tượng
-function renderAllCharts() {
-  dataObjects.forEach((obj, index) => {
-    let chartId = `chart-${index}`;
-
-    // Nếu chưa có div chứa biểu đồ => tạo mới
-    let chartDiv = document.getElementById(chartId);
-    if (!chartDiv) {
-      chartDiv = document.createElement('div');
-      chartDiv.id = chartId;
-      chartDiv.className = 'chart-container';
-      root.appendChild(chartDiv);
-    }
-
-    // Khởi tạo hoặc lấy lại instance ECharts
-    let chart = chartInstances[chartId];
-    if (!chart) {
-      chart = echarts.init(chartDiv);
-      chartInstances[chartId] = chart;
-    }
-
-    // Cập nhật biểu đồ
-    chart.setOption({
-      title: {
-        text: obj.id
-      },
-      tooltip: {
-        trigger: 'axis'
-      },
-      xAxis: {
-        type: 'category',
-        data: obj.values.map((_, i) => i + 1)
-      },
-      yAxis: {
-        type: 'value'
-      },
-      series: [{
-        name: 'Cộng dồn',
-        type: 'line',
-        data: cumulativeSum(obj.values)
-      }]
-    });
-  });
-}
-
-// Vẽ lần đầu
-renderAllCharts();
-
-// 👉 Ví dụ cập nhật sau 3 giây
-setTimeout(() => {
-  dataObjects[0].values.push(1);
-  dataObjects[1].values.push(-1);
-  dataObjects[2].values.push(1);
-
-  renderAllCharts(); // Cập nhật tất cả biểu đồ
-}, 3000);

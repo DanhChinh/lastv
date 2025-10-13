@@ -1,45 +1,79 @@
 import requests
 import pandas as pd
 
-def get_data_from_api():
-    try:
-        # Gửi yêu cầu GET tới API
-        response = requests.get('https://cyan.io.vn/xg79/get_data.php')
 
-        # Kiểm tra nếu yêu cầu thành công
-        if response.status_code == 200:
-            # Giải mã JSON từ phản hồi
-            data = response.json()
+def fetch_data_from_api(url, params=None):
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(f"Error: {response.status_code}")
 
-            # Kiểm tra nếu dữ liệu trả về thành công
-            if data.get('success'):
-                # Dữ liệu cột
-                data_rows = data['data']
+def get_all_data(api_url="https://cyan.io.vn/xg79/get_data_1.php"):
+    all_data = []
+    params = {'page': 1, 'limit': 2000}  # page = 1, limit = 100 rows per page
+    while True:
+        data = fetch_data_from_api(api_url, params)
+        if not data:  # Nếu không còn dữ liệu
+            break
+        all_data.extend(data)
+        params['page'] += 1  # Tiến sang trang tiếp theo
+    return all_data
+
+
+# def get_data_from_api():
+#     try:
+#         # Gửi yêu cầu GET tới API
+#         response = requests.get('https://cyan.io.vn/xg79/get_data.php')
+
+#         # Kiểm tra nếu yêu cầu thành công
+#         if response.status_code == 200:
+#             # Giải mã JSON từ phản hồi
+#             data = response.json()
+
+#             # Kiểm tra nếu dữ liệu trả về thành công
+#             if data.get('success'):
+#                 # Dữ liệu cột
+#                 data_rows = data['data']
                 
-                # Chuyển dữ liệu thành DataFrame
-                df = pd.DataFrame(data_rows)
+#                 # Chuyển dữ liệu thành DataFrame
+#                 df = pd.DataFrame(data_rows)
 
-                # Đảm bảo cột 'progress' là kiểu object, các cột còn lại là int64
-                for col in df.columns:
-                    if col == 'progress':
-                        # Giữ kiểu 'progress' là object (chuỗi hoặc bất kỳ kiểu dữ liệu nào không phải là số)
-                        df[col] = df[col].astype('object')
-                    else:
-                        # Chuyển tất cả các cột còn lại thành int64
-                        df[col] = pd.to_numeric(df[col], errors='coerce', downcast='integer')
+#                 # Đảm bảo cột 'progress' là kiểu object, các cột còn lại là int64
+#                 for col in df.columns:
+#                     if col == 'progress':
+#                         # Giữ kiểu 'progress' là object (chuỗi hoặc bất kỳ kiểu dữ liệu nào không phải là số)
+#                         df[col] = df[col].astype('object')
+#                     else:
+#                         # Chuyển tất cả các cột còn lại thành int64
+#                         df[col] = pd.to_numeric(df[col], errors='coerce', downcast='integer')
 
-                return df
-            else:
-                print("Dữ liệu không thành công:", data.get('message'))
-                return None
+#                 return df
+#             else:
+#                 print("Dữ liệu không thành công:", data.get('message'))
+#                 return None
+#         else:
+#             print(f"Yêu cầu không thành công với mã lỗi: {response.status_code}")
+#             return None
+#     except requests.exceptions.RequestException as e:
+#         print(f"Đã xảy ra lỗi khi kết nối: {e}")
+#         return None
+#     except Exception as e:
+#         print(f"Lỗi: {e}")
+#         return None
+
+
+def get_data_from_api():
+    data_rows = get_all_data()
+    df = pd.DataFrame(data_rows)
+
+    # Đảm bảo cột 'progress' là kiểu object, các cột còn lại là int64
+    for col in df.columns:
+        if col == 'progress':
+            # Giữ kiểu 'progress' là object (chuỗi hoặc bất kỳ kiểu dữ liệu nào không phải là số)
+            df[col] = df[col].astype('object')
         else:
-            print(f"Yêu cầu không thành công với mã lỗi: {response.status_code}")
-            return None
-    except requests.exceptions.RequestException as e:
-        print(f"Đã xảy ra lỗi khi kết nối: {e}")
-        return None
-    except Exception as e:
-        print(f"Lỗi: {e}")
-        return None
+            # Chuyển tất cả các cột còn lại thành int64
+            df[col] = pd.to_numeric(df[col], errors='coerce', downcast='integer')
 
-
+    return df

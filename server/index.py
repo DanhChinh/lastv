@@ -25,7 +25,13 @@ def handle_kiemtradulieu(msg):
     emit('server_message', {"predict": 0, "value":0, "table":table})
 
 
-
+@socketio.on('reLoadAgl')
+def handle_kiemtradulieu(msg):
+    name = msg.get('name')
+    action = msg.get('action')
+    if action == 'select':
+        handle_Select(name)
+    emit('server_message', {"predict": 0, "value":0, "table":reRenderTable()})
 
 @socketio.on('connect')
 def handle_connect():
