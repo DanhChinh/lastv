@@ -86,7 +86,7 @@ function renderTable(data) {
   html += "</tr></thead><tbody>";
 
   data.sort(
-    (a,b)=>a.percent - b.percent
+    (a,b)=>+a.isSelect - (+b.isSelect)
   )
 
   data.forEach(row => {

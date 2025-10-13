@@ -82,6 +82,7 @@ def my_predict(sid, progress):
         model.make_predict(sid, [x_pred])
         table.append(model.to_dict())
         if not model.isSelect:
+            model.score = 0
             continue
         if model.predict_fix == 1:
             c1+=model.score
