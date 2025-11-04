@@ -12,8 +12,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả ngu�
 def handle_xulydulieu(msg):
     sid = msg.get('sid')
     progress = msg.get('progress')
-    prd, value, table = my_predict(sid, progress)
-
+    prd, value, table = my_predict( progress)
     print(sid, prd, value)
     emit('server_message', {"predict": prd, "value":value, "table":table})
 
@@ -21,17 +20,13 @@ def handle_xulydulieu(msg):
 def handle_kiemtradulieu(msg):
     sid = msg.get('sid')
     rs = msg.get('rs')
-    table = check(sid, rs)
+    if rs !=1:
+        rs = 0
+    table = check(rs)
     emit('server_message', {"predict": 0, "value":0, "table":table})
 
 
-@socketio.on('reLoadAgl')
-def handle_kiemtradulieu(msg):
-    name = msg.get('name')
-    action = msg.get('action')
-    if action == 'select':
-        handle_Select(name)
-    emit('server_message', {"predict": 0, "value":0, "table":reRenderTable()})
+
 
 @socketio.on('connect')
 def handle_connect():
