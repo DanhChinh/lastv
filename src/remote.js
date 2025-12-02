@@ -63,14 +63,14 @@ const markPoints = highlightIdx.map((i, order) => ({
         xAxis: i,
         yAxis: LONG[i],
         symbol: 'circle',
-        symbolSize: 10,           // nhỏ lại
+        symbolSize: 6,           // nhỏ lại
         label: {
             show: true,
             position: 'top',     // hiện trên điểm, không che line
-            offset: [0, -10],    // nâng label lên cao hơn
+            offset: [0, -50],    // nâng label lên cao hơn
             formatter: (order + 1).toString(),
             fontSize: 20,        // nhỏ hơn
-            color: 'red',
+            color: 'black',
             fontWeight: 'bold'
         },
         itemStyle: {

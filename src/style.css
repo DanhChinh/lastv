@@ -138,3 +138,10 @@ tbody tr:hover {
 .isSelect{
   border: 5px solid green;
 }
+
+#longChartDiv{
+  width: 100vw;
+  height: 800px;
+  left: 10px;
+  background-color: bisque;
+}

@@ -33,8 +33,8 @@ const option = {
                     formatter: '{b}\n{c}'
                 },
                 data: [
-                    { type: 'max', name: 'Max',valueDim: 'close' },
-                    { type: 'min', name: 'Min',valueDim: 'close' }
+                    { type: 'max', name: 'Max', valueDim: 'close' },
+                    { type: 'min', name: 'Min', valueDim: 'close' }
                 ]
             }
         },
@@ -70,11 +70,11 @@ function calcCandle(open, change) {
         isPlay = false;
         DOM_isPlay.style.backgroundColor = "black";
     }
-    let low = Math.min(open, close) - Math.random() * Math.abs(change)*0.5;
-    let high = Math.max(open, close) + Math.random() * Math.abs(change) *0.5;
-    if(open==0 && change==0){
+    let low = Math.min(open, close) - Math.random() * Math.abs(change) * 0.5;
+    let high = Math.max(open, close) + Math.random() * Math.abs(change) * 0.5;
+    if (open == 0 && change == 0) {
         low = 0;
-        high= 0;
+        high = 0;
     }
     return {
         candle: [
@@ -126,7 +126,7 @@ function addData(newChange) {
     });
 }
 
-function smoothData(data, windowSize=3) {
+function smoothData(data, windowSize = 3) {
     const result = [];
     const half = Math.floor(windowSize / 2);
 
@@ -141,7 +141,7 @@ function smoothData(data, windowSize=3) {
             }
         }
 
-        result.push(Math.round(sum / count,2));
+        result.push(Math.round(sum / count, 2));
     }
 
     return result;
@@ -156,27 +156,41 @@ function smoothData(data, windowSize=3) {
 
 const longChart = echarts.init(document.getElementById('longChartDiv'));
 
-  let LONG = [];       // dữ liệu line
-  let highlightIdx = [] // các điểm cần highlight
+let LONG = [];       // dữ liệu line
+let highlightIdx = [] // các điểm cần highlight
 
-  const option_long = {
-      title: { text: 'LONG Chart' },
-      tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: [] },
-      yAxis: { type: 'value' },
-      series: [
-          {
-              name: 'LONG',
-              type: 'line',
-              smooth: true,   
-              data: [],
-              markPoint: { 
-                  data: []  // sẽ dùng để highlight các điểm index
-              }
-          }
-      ]
-  };
+const option_long = {
+    title: { text: 'LONG Chart' },
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', data: [] },
+    yAxis: { type: 'value' },
+    dataZoom: [
+        {
+            type: 'inside',
+            start: 0,
+            end: 1000
+        },
+        {
+            show: true,
+            type: 'slider',
+            top: '90%',
+            start: 50,
+            end: 100
+        }
+    ],
+    series: [
+        {
+            name: 'LONG',
+            type: 'line',
+            smooth: true,
+            data: [],
+            markPoint: {
+                data: []  // sẽ dùng để highlight các điểm index
+            }
+        }
+    ]
+};
 
-  longChart.setOption(option_long);
+longChart.setOption(option_long);
 
 
