@@ -89,7 +89,7 @@ function socket_connect() {
 
         if (record.progress.length === 35) {
           progress35 = JSON.stringify(record.progress)
-          socket_io.emit("xulydulieu", {
+          socket_io.emit("predict", {
             'sid': record.sid || 1,
             'progress': JSON.stringify(record.progress)
           });
@@ -111,9 +111,9 @@ function socket_connect() {
         BOT.checkPrd(rs);
         BOT.updateDom('checkPrd(rs)');
 
-        socket_io.emit("kiemtradulieu", {
+        socket_io.emit("check", {
           'sid': record.sid || 1,
-          'rs': rs == 1 ? 1 : 0
+          'rs': rs == 1 ? 1 : 2
         })
 
         return;

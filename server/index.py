@@ -2,28 +2,41 @@ from flask import Flask
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import os, json
-from model import * #my_predict,check
+from allinone import *
+from env import handle_progress
 app = Flask(__name__)
 CORS(app)  # Bật CORS cho toàn bộ ứng dụng
 socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả nguồn
 
 
-@socketio.on('xulydulieu')
-def handle_xulydulieu(msg):
-    sid = msg.get('sid')
+@socketio.on('predict')
+def handle_predict(msg):
+    global predict, indices
     progress = msg.get('progress')
-    prd, value, table = my_predict( progress)
-    print(sid, prd, value)
-    emit('server_message', {"predict": prd, "value":value, "table":table})
+    x_pred = handle_progress(progress, isEnd=False)
+    predict = 1 if int(model.predict([x_pred])[0]) ==1 else 2
+    print("predict", predict)
+    emit('handle_predict', {"predict": predict})
 
-@socketio.on('kiemtradulieu')
-def handle_kiemtradulieu(msg):
-    sid = msg.get('sid')
-    rs = msg.get('rs')
-    if rs !=1:
-        rs = 0
-    table = check(rs)
-    emit('server_message', {"predict": 0, "value":0, "table":table})
+    indices.append(best_match_index(np.cumsum(history), LONG))
+    indices = indices[-5:]
+    print("indices", indices)
+    emit('highlight_index', {"indices": indices})
+
+@socketio.on('check')
+def handle_check(msg):
+    global history
+    result = msg.get('rs')
+    if predict == None:
+        return
+    if predict == result:
+        history.append(1)
+    else:
+        history.append(-1)
+    history = history[-30:]
+    print("history", history)
+    
+
 
 
 
@@ -31,7 +44,7 @@ def handle_kiemtradulieu(msg):
 @socketio.on('connect')
 def handle_connect():
     print('✅ Client connected')
-    emit('server_message', {"predict": 0, "value":0, "table":reRenderTable()})
+    emit('handle_connect', {"LONG":LONG.tolist()})
 
 @socketio.on('disconnect')
 def handle_disconnect():

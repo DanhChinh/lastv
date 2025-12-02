@@ -34,7 +34,7 @@ slider.addEventListener("input", function () {
 var socket_io = undefined;
 
 
-DOM_fixMGold.onclick = (e)=>{
+DOM_fixMGold.onclick = (e) => {
   BOT.gold = +DOM_fixM.value
   BOT.updateDom()
 }
@@ -42,19 +42,60 @@ DOM_connectPyserver.onclick = (e) => {
   socket_io = io("http://localhost:5000");
 
   socket_io.on("connect", () => {
-    e.target.style.backgroundColor = "green" ;
+    e.target.style.backgroundColor = "green";
   });
-  socket_io.on("server_message", (msg) => {
+  socket_io.on('handle_connect', (data) => {
+    console.log("Received LONG:", data.LONG);
+
+    LONG = data.LONG;
+    const xData = Array.from({ length: LONG.length }, (_, i) => i);
+
+    longChart.setOption({
+      xAxis: { data: xData },
+      series: [{ data: LONG }]
+    });
+  });
+  // --- Nhận index từ server (highlight) ---
+  socket_io.on('highlight_index', (data) => {
+    highlightIdx = data.indices;  // server gửi: {indices: [5,10,15,...]}
+
+const markPoints = highlightIdx.map((i, order) => ({
+        xAxis: i,
+        yAxis: LONG[i],
+        symbol: 'circle',
+        symbolSize: 10,           // nhỏ lại
+        label: {
+            show: true,
+            position: 'top',     // hiện trên điểm, không che line
+            offset: [0, -10],    // nâng label lên cao hơn
+            formatter: (order + 1).toString(),
+            fontSize: 20,        // nhỏ hơn
+            color: 'red',
+            fontWeight: 'bold'
+        },
+        itemStyle: {
+            color: 'red'
+        }
+    }));
+
+    longChart.setOption({
+      series: [{
+        markPoint: { data: markPoints }
+      }]
+    });
+  });
+
+  socket_io.on("handle_predict", (msg) => {
 
     BOT.predict = +msg.predict;
-    BOT.value = +msg.value;
+    BOT.value = 1;
     BOT.bet = Math.min(
-    lamTronXuongHangNghin(BOT.gold), 
-    lamTronXuongHangNghin(+slider.value * BOT.value)
-  );
+      lamTronXuongHangNghin(BOT.gold),
+      lamTronXuongHangNghin(+slider.value * BOT.value)
+    );
     BOT.updateDom("server mess")
 
-    if(BOT.predict && BOT.value){
+    if (BOT.predict && BOT.value) {
       sendMessageToGame(BOT.bet, record.sid, BOT.predict);
     }
 
@@ -62,7 +103,7 @@ DOM_connectPyserver.onclick = (e) => {
     if (Array.isArray(tableData)) {
       renderTable(tableData);
     }
-});
+  });
 };
 
 function lamTronXuongHangNghin(so) {
@@ -86,7 +127,7 @@ function renderTable(data) {
   html += "</tr></thead><tbody>";
 
   data.sort(
-    (a,b)=>+a.isSelect - (+b.isSelect)
+    (a, b) => +a.isSelect - (+b.isSelect)
   )
 
   data.forEach(row => {
@@ -96,8 +137,8 @@ function renderTable(data) {
       if (Array.isArray(val) || typeof val === "object") {
         val = JSON.stringify(val);
       }
-      if(val == 'None'){
-        val='';
+      if (val == 'None') {
+        val = '';
       }
       html += `<td>${val}</td>`;
     });
@@ -123,11 +164,11 @@ function formatCurrency(num, locale = 'en-US', currency = 'USD') {
   });
 }
 
-function handleReLoadAgl(name, action){
+function handleReLoadAgl(name, action) {
   console.log(name, action)
   socket_io.emit("reLoadAgl", {
-    'name':name,
-    'action':action
+    'name': name,
+    'action': action
   })
 }
 

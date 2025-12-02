@@ -154,10 +154,29 @@ function smoothData(data, windowSize=3) {
 
 
 
+const longChart = echarts.init(document.getElementById('longChartDiv'));
 
+  let LONG = [];       // dữ liệu line
+  let highlightIdx = [] // các điểm cần highlight
 
+  const option_long = {
+      title: { text: 'LONG Chart' },
+      tooltip: { trigger: 'axis' },
+      xAxis: { type: 'category', data: [] },
+      yAxis: { type: 'value' },
+      series: [
+          {
+              name: 'LONG',
+              type: 'line',
+              smooth: true,   
+              data: [],
+              markPoint: { 
+                  data: []  // sẽ dùng để highlight các điểm index
+              }
+          }
+      ]
+  };
 
-
-
+  longChart.setOption(option_long);
 
 
