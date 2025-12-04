@@ -11,21 +11,17 @@ socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả ngu�
 
 @socketio.on('predict')
 def handle_predict(msg):
-    global predict, indices
+    global predict
     progress = msg.get('progress')
     x_pred = handle_progress(progress, isEnd=False)
     predict = 1 if int(model.predict([x_pred])[0]) ==1 else 2
     print("predict", predict)
     emit('handle_predict', {"predict": predict})
 
-    indices.append(best_match_index(np.cumsum(history), LONG))
-    indices = indices[-5:]
-    print("indices", indices)
-    emit('highlight_index', {"indices": indices})
 
 @socketio.on('check')
 def handle_check(msg):
-    global history
+    global history, indices
     result = msg.get('rs')
     if predict == None:
         return
@@ -35,6 +31,10 @@ def handle_check(msg):
         history.append(-1)
     history = history[-30:]
     print("history", history)
+    indices.append(best_match_index(np.cumsum(history), LONG))
+    indices = indices[-5:]
+    print("indices", indices)
+    emit('highlight_index', {"indices": indices})
     
 
 
