@@ -16,7 +16,7 @@ def handle_predict(msg):
     x_pred = handle_progress(progress, isEnd=False)
     predict = 1 if int(model.predict([x_pred])[0]) ==1 else 2
     print("predict", predict)
-    emit('handle_predict', {"predict": predict})
+    emit('handle_predict', {"predict": predict, 'sid': msg.get('sid')}) 
 
 
 @socketio.on('check')
@@ -34,6 +34,7 @@ def handle_check(msg):
     indices.append(best_match_index(np.cumsum(history), LONG))
     indices = indices[-5:]
     print("indices", indices)
+    emit('update_chart1', {'change': history[-1]})
     emit('highlight_index', {"indices": indices})
     
 
@@ -44,7 +45,7 @@ def handle_check(msg):
 @socketio.on('connect')
 def handle_connect():
     print('✅ Client connected')
-    emit('handle_connect', {"LONG":LONG.tolist()})
+    emit('handle_longChart', {"LONG":LONG.tolist()})
 
 @socketio.on('disconnect')
 def handle_disconnect():

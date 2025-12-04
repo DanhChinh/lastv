@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BuBu & DuDu</title>
-  <link rel="shortcut icon" href="./avatar.jpg" type="image/x-icon">
+  <title>HTML</title>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
@@ -16,91 +15,43 @@
 <body>
 
 
-  <div class="container-fluid">
+  <div class="container">
     <div id="echart"></div>
-<div id="longChartDiv" ></div>
+    <div id="longChartDiv"></div>
 
-    <div class="row">
-      <div class="col-6">
-        <div class="card bg_opacity">
-          <div class="card-row">
-            <span class="label">Lựa chọn:</span>
-            <h5 id="DOM_choice" class="value">1</h5>
-          </div>
-          <div class="card-row">
-            <span class="label">Giá trị:</span>
-            <h5 id="DOM_value" class="value">0</h5>
-          </div>
-          <div class="card-row">
-            <span class="label">Điểm số:</span>
-            <h5 id="DOM_bet" class="value">0</h5>
-          </div>
-
-          <div class="card-row">
-            <span class="label">Tổng điểm:</span>
-            <h5 id="DOM_gold" class="value">0</h5>
-          </div>
-        </div>
-        <div id="form_controll" class="bg_opacity my-1">
-          <div class="d-flex align-items-center">
-            <span id="valueDisplay">1000</span>
-            <input id="slider" type="range" min="0" max="15000" value="1000" step="500" class="me-2" />
-          </div>
-          <div class="d-flex align-items-center">
-            <span id="addon-wrapping">Token</span>
-            <input id="DOM_accessToken" type="text" value="" class="me-2" />
-          </div>
-          <div class="d-flex align-items-center">
-            <span>Target</span>
-            <input id="DOM_target" type="text" value="300" class="me-2" />
-          </div>
-          <div class="d-flex align-items-center">
-            <span>Fix M</span>
-            <input id="DOM_fixM" type="text" value="0" class="form-control me-2" />
-            <button id="DOM_fixMGold" class="btn btn-primary">Fix</button>
-          </div>
-
-          <button id="DOM_isPlay">Play</button>
-          <button id="DOM_isConnectGame">CnectH</button>
-          <button id="DOM_connectPyserver">CnectP</button>
-
-        </div>
-
-      </div>
-      <div class="col-6">
-        <div id="chat-container" class="bg_opacity">
-        </div>
-
-      </div>
-      <div class="col-12 ">
-        <div id="table-container" class=""></div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div id="charts_root"></div>
-    </div>
   </div>
+  <div id="fixed_form">
+    <div class="d-flex align-items-center">
+      <span id="addon-wrapping">Token</span>
+      <input id="DOM_accessToken" type="text" value="" class="me-2" />
+    </div>
 
+    <div class="card bg_opacity">
+      <div class="card-row">
+        <span class="label">Label:</span>
+        <h5 id="DOM_choice" class="value">1</h5>
+      </div>
+      <div class="d-flex align-items-center">
+        <span>Value</span>
+        <input id="DOM_value" type="text" value="" class="me-2" />
+      </div>
+      <button id="DOM_isFollow" style="background-color: green;">Follow</button>
+      <button id="DOM_isConnectGame">CnectH</button>
+      <button id="DOM_connectPyserver">CnectP</button>
+
+      <div id="chat-container" class="bg_opacity"></div>
+    </div>
+
+  </div>
   <script>
 
-
-
-
-    function getCurrentTime() {
-      const now = new Date();
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      const seconds = now.getSeconds().toString().padStart(2, '0');
-      return `${hours}:${minutes}:${seconds}`;
-    }
 
 
     function addMessage(content = "...", from = "player") {
       const chatBox = document.getElementById('chat-container');
       const msgDiv = document.createElement('div');
       msgDiv.className = `chat-message ${from}`;
-      msgDiv.innerHTML = `<small>${getCurrentTime()}___${from}:</small> ${content}`;
+      msgDiv.innerHTML = `<small>${new Date().getTime()}___${from}:</small> ${content}`;
       chatBox.appendChild(msgDiv);
 
       // 👇 Giới hạn chỉ giữ lại 10 tin nhắn mới nhất

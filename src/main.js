@@ -1,12 +1,10 @@
-
-
 function sendMessageToGame(b, sid, eid) {
-  if (!b || !sid || !eid || !isPlay) {
+  if (!b || !sid || !eid ) {
     return 0;
   }
 
   let message = JSON.stringify(MESSAGE_WS.bet(b, sid, eid));
-  addMessage(`${eid == 1 ? '💚' : '❤️'} ${formatCurrency(b)}`, "investors")
+  addMessage(`${eid == 1 ? '💚' : '❤️'} ${b}`, "investors")
 
   socket.send(message);
 }
@@ -44,7 +42,6 @@ function sendDataToThuhuyenFun(record) {
     .post("https://cyan.io.vn/xg79/post_data.php", data)
     .then((response) => {
       if (response.data.success) {
-        console.log(response.data.message)
         addMessage("save->done", "server");
       } else {
         console.error("Lỗi: " + response.data.message);
@@ -58,8 +55,6 @@ function sendDataToThuhuyenFun(record) {
 var sendInterval;
 var counter_send = 0;
 var socket;
-var is_betting = false;
-var is_bet_success = false;
 var initRecord = (
   sid = undefined,
   progress = [],
@@ -84,13 +79,13 @@ function socket_connect() {
 
     if (typeof mgs === "object") {
       //betting
-      if (mgs.cmd === 15007 && is_betting) {
+      if (mgs.cmd === 15007) {
         record.progress.push(JSON.parse(JSON.stringify(mgs.bs)));
 
         if (record.progress.length === 35) {
           progress35 = JSON.stringify(record.progress)
           socket_io.emit("predict", {
-            'sid': record.sid || 1,
+            'sid': record.sid,
             'progress': JSON.stringify(record.progress)
           });
         }
@@ -103,17 +98,13 @@ function socket_connect() {
         record.d2 = mgs.d2;
         record.d3 = mgs.d3;
         sendDataToThuhuyenFun(JSON.parse(JSON.stringify(record)));
-        is_betting = false;
         let rs = mgs.d1 + mgs.d2 + mgs.d3;
         addMessage(`${rs > 10 ? '💚' : '❤️'}`, "market")
         rs = rs > 10 ? 1 : 2;
-        checkPrd(BOT.predict, rs, BOT.value);
-        BOT.checkPrd(rs);
-        BOT.updateDom('checkPrd(rs)');
 
         socket_io.emit("check", {
-          'sid': record.sid || 1,
-          'rs': rs == 1 ? 1 : 2
+          'sid': record.sid,
+          'rs': rs 
         })
 
         return;
@@ -122,23 +113,16 @@ function socket_connect() {
       if (mgs.cmd === 15005) {
         record = initRecord();
         record.sid = mgs.sid;
-        // console.group(record.sid);
-        is_betting = true;
-        is_bet_success = false;
         return;
       }
       //sended
       if (mgs.cmd === 15002) {
         addMessage("✔️", "server")
-        is_bet_success = true;
         return;
       }
 
       if (mgs.cmd === 100) {
         addMessage(JSON.stringify(mgs), "server")
-        BOT.gold = +mgs.As.gold;
-        // BOT.gold = 500000;
-        BOT.updateDom('cmd=100')
         return;
       }
     } else {
@@ -169,37 +153,3 @@ function socket_connect() {
   return socket;
 }
 
-
-
-function checkPrd(prd, rs, value) {
-  let reward = value;
-  if (prd != rs) {
-    reward *= -1
-  }
-  addData(reward)
-}
-
-
-var BOT = {
-  predict: 0,
-  value: 0,
-  bet: 0,
-  gold: 0,
-  checkPrd: function (result) {
-    if (this.predict == result) {
-      this.gold += Math.floor(0.97 * this.bet);
-    } else {
-      this.gold -= this.bet;
-    }
-    this.predict = 0;
-    this.value = 0;
-    this.bet = 0;
-  },
-  updateDom: function (index = 0) {
-    // console.log("dom", index,this.predict, this.value, this.bet, this.gold)
-    document.getElementById('DOM_choice').innerText = this.predict ? this.predict : '';
-    document.getElementById('DOM_value').innerText = this.value ? this.value : '';
-    document.getElementById('DOM_bet').innerText = this.bet ? formatCurrency(this.bet) : '';
-    document.getElementById('DOM_gold').innerText = formatCurrency(this.gold);
-  }
-}

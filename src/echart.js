@@ -66,10 +66,7 @@ chart.setOption(option);
 // Hàm tính nến từ giá trị mới
 function calcCandle(open, change) {
     const close = open + change;
-    if (close >= +document.getElementById('DOM_target').value) {
-        isPlay = false;
-        DOM_isPlay.style.backgroundColor = "black";
-    }
+
     let low = Math.min(open, close) - Math.random() * Math.abs(change) * 0.5;
     let high = Math.max(open, close) + Math.random() * Math.abs(change) * 0.5;
     if (open == 0 && change == 0) {
@@ -88,7 +85,7 @@ function calcCandle(open, change) {
 }
 
 // Hàm thêm dữ liệu mới và cập nhật biểu đồ
-function addData(newChange) {
+function addDataToChart1(newChange) {
     rawData.push(newChange);
 
     const lastCandle = candleData[candleData.length - 1];
@@ -116,36 +113,14 @@ function addData(newChange) {
         lastLineValue = lastLineValue + adjustedDelta;
         lineData.push(parseFloat(lastLineValue.toFixed(6)));
     }
-    let smoothLine = smoothData(lineData)
     chart.setOption({
         xAxis: { data: labels },
         series: [
             { data: candleData },  // candlestick
-            { data: smoothLine }     // line
         ]
     });
 }
 
-function smoothData(data, windowSize = 3) {
-    const result = [];
-    const half = Math.floor(windowSize / 2);
-
-    for (let i = 0; i < data.length; i++) {
-        let sum = 0;
-        let count = 0;
-
-        for (let j = i - half; j <= i + half; j++) {
-            if (j >= 0 && j < data.length) {
-                sum += data[j];
-                count++;
-            }
-        }
-
-        result.push(Math.round(sum / count, 2));
-    }
-
-    return result;
-}
 
 
 
