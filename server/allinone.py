@@ -37,7 +37,43 @@ def best_match_index(SHORT, LONG):
 
     return best_idx + n  # trả về index cuối của đoạn match
 
-
+# def find_best_match_ncc(short_array, long_array):
+def best_match_index(short_array, long_array):
+    """
+    Tính Tương quan chéo Chuẩn hóa (NCC) để tìm vị trí khớp tốt nhất.
+    """
+    S = np.array(short_array, dtype=float)
+    L = np.array(long_array, dtype=float)
+    N = len(S)
+    
+    S_mean = np.mean(S)
+    S_std = np.std(S)
+    
+    ncc_scores = []
+    
+    # Trượt mảng S qua mảng L (chế độ 'valid')
+    for i in range(len(L) - N + 1):
+        window = L[i:i + N]
+        
+        L_mean = np.mean(window)
+        L_std = np.std(window)
+        
+        if S_std == 0 or L_std == 0:
+            ncc = 0.0
+        else:
+            # NCC = (tích chấm của mảng đã trừ trung bình) / (tích độ lệch chuẩn)
+            numerator = np.sum((window - L_mean) * (S - S_mean))
+            denominator = (N * L_std * S_std)
+            ncc = numerator / denominator
+        
+        ncc_scores.append(ncc)
+        
+    ncc_scores = np.array(ncc_scores)
+    best_match_index = np.argmax(ncc_scores)
+    max_ncc_score = ncc_scores[best_match_index]
+    
+    # return best_match_index, max_ncc_score, ncc_scores
+    return best_match_index + N
 
 
 # ===============================
