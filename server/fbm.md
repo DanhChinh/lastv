@@ -1,0 +1,2 @@
+thay vì vẽ bằng matplotlib, gửi dữ liệu từ pythonserver tới trình duyệt, vẽ biểu đồ bằng echartjs, 
+trong đó dữ liệu long là cố định, dữ liệu short thay đổi, mỗi lần short thay đổi thì tính toán lại và gửi dữ liệu tới trình duyệt để vẽ

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NCC ECharts Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
+        .chart-container { display: flex; justify-content: space-around; width: 100%; max-width: 1400px; margin-top: 20px; }
+        #chart1, #chart2 { width: 48%; height: 400px; border: 1px solid #ccc; }
+        .controls { margin-bottom: 20px; width: 80%; max-width: 600px; text-align: center; }
+        textarea { width: 100%; height: 60px; margin-top: 10px; padding: 5px; }
+        button { padding: 10px 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <h2>Nhập dữ liệu Mẫu Short (dạng mảng JSON)</h2>
+    <textarea id="shortDataInput">[2, 3, 4, 5, 6]</textarea>
+    <button onclick="calculateAndPlot()">Tính toán & Vẽ biểu đồ</button>
+    <p>Điểm NCC tối đa: <strong id="maxScore">...</strong> | Vị trí bắt đầu: <strong id="bestIndex">...</strong></p>
+</div>
+
+<div class="chart-container">
+    <div id="chart1"></div>
+    <div id="chart2"></div>
+</div>
+
+<script>
+const api_url = 'http://127.0.0.1:5000/api/match';
+
+// Khởi tạo ECharts instances
+const chart1 = echarts.init(document.getElementById('chart1'));
+const chart2 = echarts.init(document.getElementById('chart2'));
+
+async function calculateAndPlot() {
+    const input = document.getElementById('shortDataInput').value;
+    let shortArray;
+    
+    try {
+        shortArray = JSON.parse(input);
+        if (!Array.isArray(shortArray) || shortArray.length < 2) {
+            alert("Dữ liệu Short không hợp lệ. Vui lòng nhập mảng JSON có ít nhất 2 phần tử.");
+            return;
+        }
+    } catch (e) {
+        alert("Lỗi phân tích cú pháp JSON. Vui lòng kiểm tra định dạng.");
+        return;
+    }
+
+    try {
+        const response = await fetch(api_url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ short_array: shortArray })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server returned status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        // Cập nhật thông tin NCC
+        document.getElementById('maxScore').innerText = data.max_score.toFixed(4);
+        document.getElementById('bestIndex').innerText = data.best_index;
+
+        // Vẽ biểu đồ
+        drawChart1(data.long_array, data.match_segment, data.best_index);
+        drawChart2(data.S_centered, data.W_centered);
+
+    } catch (error) {
+        console.error("Lỗi khi kết nối hoặc xử lý dữ liệu từ server:", error);
+        alert("Không thể kết nối với Python Server (Flask). Vui lòng đảm bảo app.py đang chạy.");
+    }
+}
+
+function drawChart1(longArray, matchSegment, bestIndex) {
+    // Biểu đồ 1: Mảng Long và Đoạn Khớp Tốt nhất
+    const longData = longArray.map((value, index) => [index, value]);
+    const option1 = {
+        title: { text: `Mảng Long và Đoạn Khớp Tốt nhất (Index ${bestIndex})` },
+        tooltip: { trigger: 'axis' },
+        xAxis: { type: 'value', name: 'Chỉ số' },
+        yAxis: { type: 'value', name: 'Giá trị' },
+        series: [
+            {
+                name: 'Mảng Long (Dữ liệu)',
+                type: 'line',
+                data: longData,
+                itemStyle: { color: 'gray' },
+                lineStyle: { width: 1.5 },
+                showSymbol: false,
+                z: 1 // Đảm bảo nằm dưới đoạn khớp
+            },
+            {
+                name: 'Đoạn Khớp Tốt nhất',
+                type: 'line',
+                data: longData.slice(bestIndex, bestIndex + matchSegment[1].coord[0] - matchSegment[0].coord[0] + 1),
+                itemStyle: { color: 'red' },
+                lineStyle: { width: 3 },
+                showSymbol: true,
+                symbolSize: 6,
+                z: 2 // Đảm bảo nằm trên mảng Long
+            },
+            // Sử dụng markLine để đánh dấu phân đoạn (tùy chọn)
+            /*
+            {
+                type: 'line',
+                markLine: {
+                    symbol: ['none', 'none'],
+                    data: [
+                        { xAxis: matchSegment[0].coord[0], lineStyle: { color: 'red', type: 'dashed' } },
+                        { xAxis: matchSegment[1].coord[0], lineStyle: { color: 'red', type: 'dashed' } }
+                    ]
+                }
+            }
+            */
+        ]
+    };
+    chart1.setOption(option1);
+}
+
+function drawChart2(S_centered, W_centered) {
+    // Biểu đồ 2: So sánh Hình dạng (Đã trừ Trung bình)
+    const sData = S_centered.map((value, index) => [index, value]);
+    const wData = W_centered.map((value, index) => [index, value]);
+    
+    const option2 = {
+        title: { text: 'So sánh Hình dạng (Đã trừ Trung bình)' },
+        tooltip: { trigger: 'axis' },
+        xAxis: { type: 'value', name: 'Vị trí Tương đối' },
+        yAxis: { type: 'value', name: 'Giá trị (Trừ Trung bình)' },
+        series: [
+            {
+                name: 'Hình dạng Mẫu Short',
+                type: 'line',
+                data: sData,
+                itemStyle: { color: 'orange' },
+                lineStyle: { type: 'dashed', width: 2 },
+                showSymbol: false
+            },
+            {
+                name: 'Hình dạng Cửa sổ Khớp',
+                type: 'line',
+                data: wData,
+                itemStyle: { color: 'blue' },
+                lineStyle: { width: 2 },
+                showSymbol: true,
+                symbolSize: 4
+            }
+        ]
+    };
+    chart2.setOption(option2);
+}
+
+// Chạy lần đầu với dữ liệu mặc định
+calculateAndPlot();
+</script>
+
+</body>
+</html>
