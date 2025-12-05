@@ -33,9 +33,6 @@ DOM_connectPyserver.onclick = (e) => {
     e.target.style.backgroundColor = "green";
   });
 
-  socket_io.on('update_chart1', (data)=>{
-    addDataToChart1(data.change)
-  })
   // --- Nhận index từ server (highlight) ---
   socket_io.on('calculateAndPlot', (msg)=>{
     calculateAndPlot(msg.data)

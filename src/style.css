@@ -59,8 +59,7 @@ button:hover {
 
 
 
-#echart{
-  width: 100%;
+.chart_candle{
   height: 300px;
   color: white;
   border: 1px solid #ccc;

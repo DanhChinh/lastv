@@ -31,7 +31,6 @@ def handle_check(msg):
         history.append(-1)
     history = history[-30:]
     print("history", history)
-    emit('update_chart1', {'change': history[-1]})
 
     short_array = np.cumsum(history)
     data = find_best_match_ncc(short_array, LONG_ARRAY)
@@ -39,15 +38,7 @@ def handle_check(msg):
     
 
 
-# def match_template():
-#     data = request.json
-#     short_array = data.get('short_array')
-    
-#     if not short_array:
-#         return jsonify({"error": "Missing short_array"}), 400
-    
-#     results = find_best_match_ncc(short_array, LONG_ARRAY)
-#     return jsonify(results)
+
 
 
 
@@ -55,10 +46,9 @@ def handle_check(msg):
 def handle_connect():
     print('✅ Client connected')
     import random
-    test_short = np.cumsum([random.choice([-1, 1]) for i in range(10)])
-    print(test_short)
-    print(LONG_ARRAY)
-    data = find_best_match_ncc(test_short, LONG_ARRAY)
+    test_short = np.cumsum([random.choice([-1, 1]) for i in range(30)])
+
+    data = FIND_BEST_MATCH(test_short)
     emit("calculateAndPlot", {'data': data})
 
 @socketio.on('disconnect')
