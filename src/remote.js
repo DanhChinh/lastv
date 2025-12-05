@@ -33,48 +33,14 @@ DOM_connectPyserver.onclick = (e) => {
     e.target.style.backgroundColor = "green";
   });
 
-  socket_io.on('handle_longChart', (data) => {
-    LONG = data.LONG;
-    const xData = Array.from({ length: LONG.length }, (_, i) => i);
-
-    longChart.setOption({
-      xAxis: { data: xData },
-      series: [{ data: LONG }]
-    });
-  });
-
   socket_io.on('update_chart1', (data)=>{
     addDataToChart1(data.change)
   })
   // --- Nhận index từ server (highlight) ---
-  socket_io.on('highlight_index', (data) => {
-    highlightIdx = data.indices;  // server gửi: {indices: [5,10,15,...]}
+  socket_io.on('calculateAndPlot', (msg)=>{
+    calculateAndPlot(msg.data)
 
-    const markPoints = highlightIdx.map((i, order) => ({
-      xAxis: i,
-      yAxis: LONG[i],
-      symbol: 'circle',
-      symbolSize: 6,           // nhỏ lại
-      label: {
-        show: true,
-        position: 'top',     // hiện trên điểm, không che line
-        offset: [0, -50],    // nâng label lên cao hơn
-        formatter: (order + 1).toString(),
-        fontSize: 20,        // nhỏ hơn
-        color: 'black',
-        fontWeight: 'bold'
-      },
-      itemStyle: {
-        color: 'red'
-      }
-    }));
-
-    longChart.setOption({
-      series: [{
-        markPoint: { data: markPoints }
-      }]
-    });
-  });
+  })
 
   socket_io.on("handle_predict", (msg) => {
     let predict = msg.predict;

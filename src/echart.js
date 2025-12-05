@@ -129,43 +129,110 @@ function addDataToChart1(newChange) {
 
 
 
-const longChart = echarts.init(document.getElementById('longChartDiv'));
 
-let LONG = [];       // dữ liệu line
-let highlightIdx = [] // các điểm cần highlight
 
-const option_long = {
-    title: { text: 'LONG Chart' },
-    tooltip: { trigger: 'axis' },
-    xAxis: { type: 'category', data: [] },
-    yAxis: { type: 'value' },
-    dataZoom: [
-        {
-            type: 'inside',
-            start: 0,
-            end: 1000
-        },
-        {
-            show: true,
-            type: 'slider',
-            top: '90%',
-            start: 50,
-            end: 100
-        }
-    ],
-    series: [
-        {
-            name: 'LONG',
-            type: 'line',
-            smooth: true,
-            data: [],
-            markPoint: {
-                data: []  // sẽ dùng để highlight các điểm index
+function drawChart1(longArray, matchSegment, bestIndex) {
+    // Biểu đồ 1: Mảng Long và Đoạn Khớp Tốt nhất
+    const longData = longArray.map((value, index) => [index, value]);
+    const option1 = {
+        title: { text: `Mảng Long và Đoạn Khớp Tốt nhất (Index ${bestIndex})` },
+        tooltip: { trigger: 'axis' },
+        xAxis: { type: 'value', name: 'Chỉ số' },
+        yAxis: { type: 'value', name: 'Giá trị' },
+        dataZoom: [
+            {
+                type: 'inside',
+                start: 0,
+                end: 1000
+            },
+            {
+                show: true,
+                type: 'slider',
+                top: '90%',
+                start: 50,
+                end: 100
             }
-        }
-    ]
-};
+        ],
+        series: [
+            {
+                name: 'Mảng Long (Dữ liệu)',
+                type: 'line',
+                data: longData,
+                itemStyle: { color: 'gray' },
+                lineStyle: { width: 1.5 },
+                showSymbol: false,
+                z: 1 // Đảm bảo nằm dưới đoạn khớp
+            },
+            {
+                name: 'Đoạn Khớp Tốt nhất',
+                type: 'line',
+                data: longData.slice(bestIndex, bestIndex + matchSegment[1].coord[0] - matchSegment[0].coord[0] + 1),
+                itemStyle: { color: 'red' },
+                lineStyle: { width: 3 },
+                showSymbol: true,
+                symbolSize: 6,
+                z: 2 // Đảm bảo nằm trên mảng Long
+            },
+            // Sử dụng markLine để đánh dấu phân đoạn (tùy chọn)
+            /*
+            {
+                type: 'line',
+                markLine: {
+                    symbol: ['none', 'none'],
+                    data: [
+                        { xAxis: matchSegment[0].coord[0], lineStyle: { color: 'red', type: 'dashed' } },
+                        { xAxis: matchSegment[1].coord[0], lineStyle: { color: 'red', type: 'dashed' } }
+                    ]
+                }
+            }
+            */
+        ]
+    };
+    chart1.setOption(option1);
+}
 
-longChart.setOption(option_long);
+function drawChart2(S_centered, W_centered) {
+    // Biểu đồ 2: So sánh Hình dạng (Đã trừ Trung bình)
+    const sData = S_centered.map((value, index) => [index, value]);
+    const wData = W_centered.map((value, index) => [index, value]);
 
+    const option2 = {
+        title: { text: 'So sánh Hình dạng (Đã trừ Trung bình)' },
+        tooltip: { trigger: 'axis' },
+        xAxis: { type: 'value', name: 'Vị trí Tương đối' },
+        yAxis: { type: 'value', name: 'Giá trị (Trừ Trung bình)' },
+        series: [
+            {
+                name: 'Hình dạng Mẫu Short',
+                type: 'line',
+                data: sData,
+                itemStyle: { color: 'orange' },
+                lineStyle: { type: 'dashed', width: 2 },
+                showSymbol: false
+            },
+            {
+                name: 'Hình dạng Cửa sổ Khớp',
+                type: 'line',
+                data: wData,
+                itemStyle: { color: 'blue' },
+                lineStyle: { width: 2 },
+                showSymbol: true,
+                symbolSize: 4
+            }
+        ]
+    };
+    chart2.setOption(option2);
+}
 
+const chart1 = echarts.init(document.getElementById('chart1'));
+const chart2 = echarts.init(document.getElementById('chart2'));
+
+function calculateAndPlot(data) {
+    // Cập nhật thông tin NCC
+    document.getElementById('maxScore').innerText = data.max_score.toFixed(4);
+    document.getElementById('bestIndex').innerText = data.best_index;
+
+    // Vẽ biểu đồ
+    drawChart1(data.long_array, data.match_segment, data.best_index);
+    drawChart2(data.S_centered, data.W_centered);
+}
