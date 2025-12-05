@@ -1,4 +1,5 @@
 import numpy as np
+import random as rd
 from env import make_data, handle_progress
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
@@ -12,10 +13,23 @@ class MYMODEL:
         pred_p2 = self.model.predict(data_long)
         compare = np.where(pred_p2 == label_long, 1, -1)
         self.LONG_ARRAY = np.cumsum(compare)
-        history = []
-        predict = None
+        self.history = [rd.choice([-1,1]) for i in range(15)]
+        self.short_array = np.cumsum(self.history)
+        self.predict = None
         return self.LONG_ARRAY
+    def predict(self, x_pred):
+        self.predict = 1 if int(self.model.predict([x_pred])[0]) ==1 else 2
+        return self.predict
 
+    def check(self, result):
+        if self.predict == None:
+            return
+        if self.predict == result:
+            self.history.append(1)
+        else:
+            self.history.append(-1)
+        self.history = self.history[-15:]
+        self.short_array = np.cumsum(self.history)
 
 def find_best_match_ncc(short_array, long_array):
     S = np.array(short_array, dtype=float)
@@ -102,13 +116,21 @@ def find_best_match_ncc(short_array, long_array):
 
 
 
-def FIND_BEST_MATCH(short_array): #long va short da cumsum
+def FIND_BEST_MATCHS(): 
     data = []
     for name, model in models.items():
         data.append(
-            find_best_match_ncc(short_array, model.LONG_ARRAY)
+            find_best_match_ncc(model.short_array, model.LONG_ARRAY)
         )
     return data
+def PREDICT(x_pred):
+    predicts = []
+    for name, model in models.items():
+        predicts.append(model.predict(x_pred))
+    return predicts
+def CHECK(result):
+    for name, model in models.items():
+        model.check(result)
 # ===============================
 # 1. TẠO DỮ LIỆU
 # ===============================

@@ -110,6 +110,11 @@ const chart_short = [
     echarts.init(document.getElementById('chart_short_2')),
     echarts.init(document.getElementById('chart_short_3'))
 ]
+const DOM_predicts = [
+    document.getElementById('predict_1'),
+    document.getElementById('predict_2'),
+    document.getElementById('predict_3')
+]
 function calculateAndPlot(data) {
 
     for (let i = 0; i < 3; i++) {

@@ -34,29 +34,32 @@ DOM_connectPyserver.onclick = (e) => {
   });
 
   // --- Nhận index từ server (highlight) ---
-  socket_io.on('calculateAndPlot', (msg)=>{
-    calculateAndPlot(msg.data)
+  socket_io.on('best_matchs', (msg)=>{
+    calculateAndPlot(msg.best_matchs)
 
   })
 
   socket_io.on("handle_predict", (msg) => {
-    let predict = msg.predict;
-    document.getElementById("DOM_choice").innerText = predict;
-    let value = +DOM_value.value;
-    if (!isFollow){
-      predict = predict==1?2:1;
+    let predicts = msg.predicts;
+    for(let i=0; i<3; i++){
+      DOM_predicts[i].innerText = predicts[i];
     }
-    console.log({
-      "predict":predict,
-      'value':value
-    })
-    if (predict  && value) {
-      sendMessageToGame(
-        value*1000, 
-        msg.sid, 
-        predict)
-    }
-    DOM_value.value = '';
+    // document.getElementById("DOM_choice").innerText = predict;
+    // let value = +DOM_value.value;
+    // if (!isFollow){
+    //   predict = predict==1?2:1;
+    // }
+    // console.log({
+    //   "predict":predict,
+    //   'value':value
+    // })
+    // if (predict  && value) {
+    //   sendMessageToGame(
+    //     value*1000, 
+    //     msg.sid, 
+    //     predict)
+    // }
+    // DOM_value.value = '';
   });
 };
 

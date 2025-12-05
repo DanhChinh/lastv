@@ -11,30 +11,18 @@ socketio = SocketIO(app, cors_allowed_origins="*")  # Cho phép tất cả ngu�
 
 @socketio.on('predict')
 def handle_predict(msg):
-    global predict
     progress = msg.get('progress')
     x_pred = handle_progress(progress, isEnd=False)
-    predict = 1 if int(model.predict([x_pred])[0]) ==1 else 2
-    print("predict", predict)
-    emit('handle_predict', {"predict": predict, 'sid': msg.get('sid')}) 
+    predicts =  PREDICT()
+    emit('handle_predict', {"predicts": predicts, 'sid': msg.get('sid')}) 
 
 
 @socketio.on('check')
 def handle_check(msg):
-    global history, indices
     result = msg.get('rs')
-    if predict == None:
-        return
-    if predict == result:
-        history.append(1)
-    else:
-        history.append(-1)
-    history = history[-30:]
-    print("history", history)
-
-    short_array = np.cumsum(history)
-    data = find_best_match_ncc(short_array, LONG_ARRAY)
-    emit("calculateAndPlot", {'data': data})
+    CHECK(result)
+    best_matchs = FIND_BEST_MATCHS()
+    emit("best_matchs", {'best_matchs': best_matchs})
     
 
 
@@ -45,11 +33,8 @@ def handle_check(msg):
 @socketio.on('connect')
 def handle_connect():
     print('✅ Client connected')
-    import random
-    test_short = np.cumsum([random.choice([-1, 1]) for i in range(30)])
-
-    data = FIND_BEST_MATCH(test_short)
-    emit("calculateAndPlot", {'data': data})
+    best_matchs = FIND_BEST_MATCHS()
+    emit("best_matchs", {'best_matchs': best_matchs})
 
 @socketio.on('disconnect')
 def handle_disconnect():
